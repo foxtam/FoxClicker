@@ -15,16 +15,14 @@ public abstract class Bot {
     private boolean isGlobalPause = false;
 
     {
-
-    }
-
-    public Bot(final KeyConfig keyConfig) {
         try {
             this.robot = new Robot();
         } catch (AWTException e) {
             throw new AWTRuntimeException(e);
         }
+    }
 
+    public Bot(final KeyConfig keyConfig) {
         this.keyConfig = keyConfig;
         keyboardHook.addKeyListener(
                 new GlobalKeyAdapter() {
