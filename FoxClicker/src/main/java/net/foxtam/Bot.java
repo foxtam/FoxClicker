@@ -4,23 +4,11 @@ import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
-import java.awt.*;
 
 public abstract class Bot {
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
-    private final Robot robot;
     private final KeyConfig keyConfig;
-
-    private boolean isInterruptedWithKey = false;
-    private boolean isGlobalPause = false;
-
-    {
-        try {
-            this.robot = new Robot();
-        } catch (AWTException e) {
-            throw new AWTRuntimeException(e);
-        }
-    }
+    private final BotLifeController lifeController = new BotLifeController();
 
     public Bot(final KeyConfig keyConfig) {
         this.keyConfig = keyConfig;
@@ -31,12 +19,29 @@ public abstract class Bot {
                         if (event.getVirtualKeyCode() == keyConfig.getStopKey()) {
                             if (event.isControlPressed() == keyConfig.isCtrlPressed()
                                     && event.isShiftPressed() == keyConfig.isShiftPressed()) {
-                                isInterruptedWithKey = true;
+                                lifeController.interrupt();
                             }
                         } else if (event.getVirtualKeyCode() == keyConfig.getPauseKey()) {
-                            isGlobalPause = !isGlobalPause;
+                            if (lifeController.isGlobalPause()) {
+                                lifeController.cancelGlobalPause();
+                            } else {
+                                lifeController.setGlobalPause();
+                            }
                         }
                     }
                 });
     }
+
+    protected abstract void action();
+
+    public void run() {
+        try {
+            action();
+        } catch (InterruptBotException e) {
+            System.out.println("Interruption reason: " + e.getMessage());
+        } finally {
+            keyboardHook.shutdownHook();
+        }
+    }
+
 }
