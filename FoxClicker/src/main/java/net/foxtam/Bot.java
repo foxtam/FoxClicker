@@ -4,6 +4,7 @@ import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import net.foxtam.exceptions.AWTRuntimeException;
+import net.foxtam.exceptions.FoxClickerException;
 import net.foxtam.exceptions.InterruptBotException;
 
 import java.awt.*;
@@ -27,23 +28,23 @@ public abstract class Bot {
     public Bot(final KeyConfig keyConfig) {
         this.keyConfig = keyConfig;
         keyboardHook.addKeyListener(
-                new GlobalKeyAdapter() {
-                    @Override
-                    public void keyPressed(GlobalKeyEvent event) {
-                        if (event.getVirtualKeyCode() == keyConfig.getStopKey()) {
-                            if (event.isControlPressed() == keyConfig.isCtrlPressed()
-                                    && event.isShiftPressed() == keyConfig.isShiftPressed()) {
-                                lifeController.interrupt();
-                            }
-                        } else if (event.getVirtualKeyCode() == keyConfig.getPauseKey()) {
-                            if (lifeController.isGlobalPause()) {
-                                lifeController.cancelGlobalPause();
-                            } else {
-                                lifeController.setGlobalPause();
-                            }
+            new GlobalKeyAdapter() {
+                @Override
+                public void keyPressed(GlobalKeyEvent event) {
+                    if (event.getVirtualKeyCode() == keyConfig.getStopKey()) {
+                        if (event.isControlPressed() == keyConfig.isCtrlPressed()
+                            && event.isShiftPressed() == keyConfig.isShiftPressed()) {
+                            lifeController.interrupt();
+                        }
+                    } else if (event.getVirtualKeyCode() == keyConfig.getPauseKey()) {
+                        if (lifeController.isGlobalPause()) {
+                            lifeController.cancelGlobalPause();
+                        } else {
+                            lifeController.setGlobalPause();
                         }
                     }
-                });
+                }
+            });
     }
 
     protected abstract void action();
@@ -51,8 +52,11 @@ public abstract class Bot {
     public void run() {
         try {
             action();
-        } catch (InterruptBotException e) {
+        } catch (FoxClickerException e) {
             System.out.println("Interruption reason: " + e.getMessage());
+            if (!(e instanceof InterruptBotException)) {
+                e.printStackTrace();
+            }
         } finally {
             keyboardHook.shutdownHook();
         }
