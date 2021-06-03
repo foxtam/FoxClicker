@@ -1,6 +1,6 @@
 package net.foxtam.exceptions;
 
-public class InterruptBotException extends RuntimeException {
+public class InterruptBotException extends FoxClickerException {
     public InterruptBotException(String message, Throwable cause) {
         super(message, cause);
     }
