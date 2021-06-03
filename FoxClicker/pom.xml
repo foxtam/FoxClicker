@@ -23,6 +23,7 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/lc.kra.system/system-hook -->
         <dependency>
             <groupId>lc.kra.system</groupId>
             <artifactId>system-hook</artifactId>
@@ -34,6 +35,19 @@
             <artifactId>opencv</artifactId>
             <version>4.5.1-2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.8.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.8.0</version>
+        </dependency>
+
 
     </dependencies>
 
