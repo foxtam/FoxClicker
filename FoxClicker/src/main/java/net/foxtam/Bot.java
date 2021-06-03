@@ -4,11 +4,23 @@ import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
+import java.awt.*;
+
 
 public abstract class Bot {
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
     private final KeyConfig keyConfig;
-    private final BotLifeController lifeController = new BotLifeController();
+    private final Robot robot;
+
+    {
+        try {
+            robot = new Robot();
+        } catch (AWTException e) {
+            throw new AWTRuntimeException(e);
+        }
+    }
+
+    private final BotLifeController lifeController = new BotLifeController(robot);
 
     public Bot(final KeyConfig keyConfig) {
         this.keyConfig = keyConfig;

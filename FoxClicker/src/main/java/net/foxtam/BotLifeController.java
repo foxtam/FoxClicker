@@ -7,12 +7,8 @@ public class BotLifeController {
     private boolean globalPause = false;
     private final Robot robot;
 
-    {
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-            throw new AWTRuntimeException(e);
-        }
+    public BotLifeController(Robot robot) {
+        this.robot = robot;
     }
 
     public void sleep(int millis) {
