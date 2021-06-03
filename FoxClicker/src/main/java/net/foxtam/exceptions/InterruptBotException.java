@@ -1,4 +1,4 @@
-package net.foxtam;
+package net.foxtam.exceptions;
 
 public class InterruptBotException extends RuntimeException {
     public InterruptBotException(String message, Throwable cause) {

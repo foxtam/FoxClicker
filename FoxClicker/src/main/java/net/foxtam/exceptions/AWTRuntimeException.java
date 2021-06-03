@@ -1,4 +1,4 @@
-package net.foxtam;
+package net.foxtam.exceptions;
 
 import java.awt.*;
 

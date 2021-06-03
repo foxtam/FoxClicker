@@ -1,5 +1,6 @@
 package net.foxtam;
 
+import net.foxtam.exceptions.BufferedImageProcessingException;
 import org.opencv.core.Mat;
 
 import java.awt.image.BufferedImage;

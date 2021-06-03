@@ -3,6 +3,8 @@ package net.foxtam;
 import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
+import net.foxtam.exceptions.AWTRuntimeException;
+import net.foxtam.exceptions.InterruptBotException;
 
 import java.awt.*;
 

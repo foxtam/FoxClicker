@@ -1,5 +1,7 @@
 package net.foxtam;
 
+import net.foxtam.exceptions.InterruptBotException;
+
 import java.awt.*;
 
 public class BotLifeController {
