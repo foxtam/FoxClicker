@@ -12,7 +12,6 @@ import java.awt.*;
 
 public abstract class Bot {
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
-    private final KeyConfig keyConfig;
     private final Robot robot;
 
     {
@@ -26,7 +25,6 @@ public abstract class Bot {
     private final BotLifeController lifeController = new BotLifeController(robot);
 
     public Bot(String windowTitle, KeyConfig keyConfig) {
-        this.keyConfig = keyConfig;
         keyboardHook.addKeyListener(
             new GlobalKeyAdapter() {
                 @Override
