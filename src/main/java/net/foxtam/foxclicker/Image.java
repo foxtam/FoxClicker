@@ -21,7 +21,7 @@ public class Image {
     private static final Cleaner cleaner = Cleaner.create();
 
     static {
-        nu.pattern.OpenCV.loadShared();
+        nu.pattern.OpenCV.loadLocally();
     }
 
     private final Mat matrix;
