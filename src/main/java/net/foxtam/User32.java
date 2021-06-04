@@ -14,5 +14,5 @@ public interface User32 extends StdCallLibrary {
     boolean ShowWindow(HWND hWnd, int nCmdShow);
     BOOL GetWindowPlacement(HWND hWnd, WINDOWPLACEMENT lpwndpl);
     HWND FindWindowEx(HWND parent, HWND child, String className, String window);
-    
+    HWND GetForegroundWindow();
 }
