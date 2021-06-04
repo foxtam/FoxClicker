@@ -1,5 +1,7 @@
 package net.foxtam;
 
+import lc.kra.system.keyboard.event.GlobalKeyEvent;
+
 public class KeyConfig {
     private final int stopKey;
     private final int pauseKey;
@@ -27,5 +29,9 @@ public class KeyConfig {
         this.pauseKey = pauseKey;
         this.ctrlPressed = ctrlPressed;
         this.shiftPressed = shiftPressed;
+    }
+
+    public static KeyConfig getDefault() {
+        return new KeyConfig(GlobalKeyEvent.VK_F8, GlobalKeyEvent.VK_F4, false, false);
     }
 }
