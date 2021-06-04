@@ -5,6 +5,7 @@ import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
 import java.awt.*;
+import java.util.Optional;
 
 import net.foxtam.foxclicker.exceptions.AWTRuntimeException;
 import net.foxtam.foxclicker.exceptions.FoxClickerException;
@@ -12,21 +13,14 @@ import net.foxtam.foxclicker.exceptions.InterruptBotException;
 
 public abstract class Bot {
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
-    private final Robot robot;
+    private final Screen screen = new Screen();
+    private final Mouse mouse;
+
     private final Window window;
-
-    {
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-            throw new AWTRuntimeException(e);
-        }
-    }
-
-    private final BotLifeController lifeController = new BotLifeController(robot);
+    private final BotLifeController lifeController = new BotLifeController();
 
     public Bot(String windowTitle, KeyConfig keyConfig) {
-        this.window = Window.getByTitle(windowTitle);
+        this.window = Window.getByTitle(windowTitle, screen);
         keyboardHook.addKeyListener(
             new GlobalKeyAdapter() {
                 @Override
@@ -63,4 +57,13 @@ public abstract class Bot {
         }
     }
 
+    protected void leftClickOn(Image image) {
+        Optional<ScreenPoint> point = window.getCenterPointOf(image);
+        if(point.isPresent()) {
+            mouse.leftClickOn(point);
+        } else {
+            throw new ImageNotFoundException("Image not found: " + image);
+        }
+    }
+    
 }
