@@ -33,13 +33,9 @@ public class Window {
         } else {
             User32.INSTANCE.ShowWindow(hWnd, SW_NORMAL);
         }
-        User32.INSTANCE.SetForegroundWindow(hWnd);
-        while (User32.INSTANCE.GetForegroundWindow() != hWnd) {
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        do {
+            User32.INSTANCE.SetForegroundWindow(hWnd);
+            Util.sleep(5);
+        } while (!User32.INSTANCE.GetForegroundWindow().equals(hWnd));
     }
 }
