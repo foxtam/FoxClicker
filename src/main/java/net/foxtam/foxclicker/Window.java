@@ -1,9 +1,4 @@
-package net.foxtam;
-
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinUser;
-
-import java.util.concurrent.TimeUnit;
+package net.foxtam.foxclicker;
 
 import static com.sun.jna.platform.win32.WinDef.*;
 import static com.sun.jna.platform.win32.WinUser.*;

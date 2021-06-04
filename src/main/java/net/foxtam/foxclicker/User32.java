@@ -1,4 +1,4 @@
-package net.foxtam;
+package net.foxtam.foxclicker;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.*;

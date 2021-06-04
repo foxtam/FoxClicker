@@ -1,4 +1,4 @@
-package net.foxtam;
+package net.foxtam.foxclicker;
 
 /**
  * Hello world!

@@ -1,6 +1,6 @@
-package net.foxtam;
+package net.foxtam.foxclicker;
 
-import net.foxtam.exceptions.InterruptBotException;
+import net.foxtam.foxclicker.exceptions.InterruptBotException;
 
 import java.awt.*;
 

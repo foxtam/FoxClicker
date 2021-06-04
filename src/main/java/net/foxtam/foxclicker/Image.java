@@ -1,7 +1,7 @@
-package net.foxtam;
+package net.foxtam.foxclicker;
 
-import net.foxtam.exceptions.BufferedImageProcessingException;
-import net.foxtam.exceptions.LoadImageException;
+import net.foxtam.foxclicker.exceptions.BufferedImageProcessingException;
+import net.foxtam.foxclicker.exceptions.LoadImageException;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
