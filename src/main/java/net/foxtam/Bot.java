@@ -25,7 +25,7 @@ public abstract class Bot {
 
     private final BotLifeController lifeController = new BotLifeController(robot);
 
-    public Bot(final KeyConfig keyConfig) {
+    public Bot(String windowTitle, KeyConfig keyConfig) {
         this.keyConfig = keyConfig;
         keyboardHook.addKeyListener(
             new GlobalKeyAdapter() {
