@@ -1,6 +1,6 @@
 package net.foxtam.foxclicker.exceptions;
 
-public abstract class FoxClickerException extends RuntimeException {
+public class FoxClickerException extends RuntimeException {
     public FoxClickerException() {
     }
 

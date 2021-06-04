@@ -3,12 +3,12 @@ package net.foxtam.foxclicker;
 import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
-import net.foxtam.foxclicker.exceptions.AWTRuntimeException;
-import net.foxtam.foxclicker.exceptions.FoxClickerException;
-import net.foxtam.foxclicker.exceptions.InterruptBotException;
 
 import java.awt.*;
 
+import net.foxtam.foxclicker.exceptions.AWTRuntimeException;
+import net.foxtam.foxclicker.exceptions.FoxClickerException;
+import net.foxtam.foxclicker.exceptions.InterruptBotException;
 
 public abstract class Bot {
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
