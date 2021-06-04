@@ -13,6 +13,7 @@ import java.awt.*;
 public abstract class Bot {
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
     private final Robot robot;
+    private final Window window;
 
     {
         try {
@@ -25,6 +26,7 @@ public abstract class Bot {
     private final BotLifeController lifeController = new BotLifeController(robot);
 
     public Bot(String windowTitle, KeyConfig keyConfig) {
+        this.window = Window.getByTitle(windowTitle);
         keyboardHook.addKeyListener(
             new GlobalKeyAdapter() {
                 @Override
@@ -49,6 +51,7 @@ public abstract class Bot {
 
     public void run() {
         try {
+            this.window.activate();
             action();
         } catch (FoxClickerException e) {
             System.out.println("Interruption reason: " + e.getMessage());
