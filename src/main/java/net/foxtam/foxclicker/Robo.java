@@ -4,7 +4,7 @@ import net.foxtam.foxclicker.exceptions.AWTRuntimeException;
 
 import java.awt.*;
 
-public class BotRobot {
+public class Robo {
     public static final Robot INSTANCE;
 
     static {

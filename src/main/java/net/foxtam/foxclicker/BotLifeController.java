@@ -2,8 +2,6 @@ package net.foxtam.foxclicker;
 
 import net.foxtam.foxclicker.exceptions.InterruptBotException;
 
-import java.awt.*;
-
 public class BotLifeController {
     private boolean interruptedWithKey = false;
     private boolean globalPause = false;
@@ -12,10 +10,10 @@ public class BotLifeController {
         int timeQuantum = 500;
         for (int i = 1; i <= millis / timeQuantum; i++) {
             checkPauseOrInterrupt();
-            BotRobot.INSTANCE.delay(timeQuantum);
+            Robo.INSTANCE.delay(timeQuantum);
         }
         checkPauseOrInterrupt();
-        BotRobot.INSTANCE.delay(millis % timeQuantum);
+        Robo.INSTANCE.delay(millis % timeQuantum);
     }
 
     private void checkPauseOrInterrupt() {
@@ -37,7 +35,7 @@ public class BotLifeController {
     private void userPause() {
         while (globalPause) {
             if (interruptedWithKey) interruptBot("Ручное завершение");
-            BotRobot.INSTANCE.delay(10);
+            Robo.INSTANCE.delay(10);
         }
     }
 
