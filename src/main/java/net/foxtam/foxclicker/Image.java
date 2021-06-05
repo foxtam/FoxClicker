@@ -32,7 +32,7 @@ public class Image {
     }
 
     public static Image loadFromBufferedImage(BufferedImage bufferedImage) {
-        return new Image(bufferedImgToMat(bufferedImage));
+        return new Image(getMatFrom(bufferedImage));
     }
 
     public static Image loadFromFile(String path) {
@@ -45,7 +45,7 @@ public class Image {
 
     private static Image tryLoadFromFile(String path) throws IOException {
         BufferedImage image = ImageIO.read(new FileInputStream(path));
-        Mat matrix = bufferedImgToMat(image);
+        Mat matrix = getMatFrom(image);
         Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         return new Image(matrix);
     }
@@ -64,13 +64,13 @@ public class Image {
                 throw new IOException();
             }
             BufferedImage image = ImageIO.read(resourceAsStream);
-            Mat matrix = bufferedImgToMat(image);
+            Mat matrix = getMatFrom(image);
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
             return new Image(matrix);
         }
     }
 
-    private static Mat bufferedImgToMat(BufferedImage bufferedImage) {
+    public static Mat getMatFrom(BufferedImage bufferedImage) {
         DataBuffer dataBuffer = bufferedImage.getRaster().getDataBuffer();
         byte[] imgPixels;
 
