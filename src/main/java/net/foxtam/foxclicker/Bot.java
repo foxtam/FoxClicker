@@ -4,23 +4,20 @@ import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
-import java.awt.*;
 import java.util.Optional;
 
-import net.foxtam.foxclicker.exceptions.AWTRuntimeException;
 import net.foxtam.foxclicker.exceptions.FoxClickerException;
+import net.foxtam.foxclicker.exceptions.ImageNotFoundException;
 import net.foxtam.foxclicker.exceptions.InterruptBotException;
 
 public abstract class Bot {
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
-    private final Screen screen = new Screen();
-    private final Mouse mouse;
 
     private final Window window;
     private final BotLifeController lifeController = new BotLifeController();
 
-    public Bot(String windowTitle, KeyConfig keyConfig) {
-        this.window = Window.getByTitle(windowTitle, screen);
+    protected Bot(String windowTitle, KeyConfig keyConfig) {
+        this.window = Window.getByTitle(windowTitle, lifeController);
         keyboardHook.addKeyListener(
             new GlobalKeyAdapter() {
                 @Override
@@ -41,8 +38,6 @@ public abstract class Bot {
             });
     }
 
-    protected abstract void action();
-
     public void run() {
         try {
             this.window.activate();
@@ -57,13 +52,25 @@ public abstract class Bot {
         }
     }
 
+    protected abstract void action();
+
     protected void leftClickOn(Image image) {
         Optional<ScreenPoint> point = window.getCenterPointOf(image);
-        if(point.isPresent()) {
-            mouse.leftClickOn(point);
+        if (point.isPresent()) {
+            Mouse.INSTANCE.leftClickAt(point.get());
         } else {
             throw new ImageNotFoundException("Image not found: " + image);
         }
     }
-    
+
+    protected void waitForImage(Image image) {
+        while (!isImageView(image)) {
+            lifeController.sleep(1);
+        }
+    }
+
+    protected boolean isImageView(Image image) {
+        return window.getLeftTopPointOf(image).isPresent();
+    }
+
 }

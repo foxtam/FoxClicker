@@ -8,19 +8,19 @@ import static com.sun.jna.platform.win32.WinUser.*;
 
 public class Window {
     private final HWND hWnd;
-    private final Screen screen;
+    private final BotLifeController lifeController;
 
-    private Window(HWND hWnd, Screen screen) {
+    private Window(HWND hWnd, BotLifeController lifeController) {
         this.hWnd = hWnd;
-        this.screen = screen;
+        this.lifeController = lifeController;
     }
 
-    public static Window getByClass(String windowClassName, Screen screen) {
-        return new Window(User32.INSTANCE.FindWindow(windowClassName, null), screen);
+    public static Window getByClass(String windowClassName, BotLifeController lifeController) {
+        return new Window(User32.INSTANCE.FindWindow(windowClassName, null), lifeController);
     }
 
-    public static Window getByTitle(String windowTitle, Screen screen) {
-        return new Window(User32.INSTANCE.FindWindow(null, windowTitle), screen);
+    public static Window getByTitle(String windowTitle, BotLifeController lifeController) {
+        return new Window(User32.INSTANCE.FindWindow(null, windowTitle), lifeController);
     }
 
     public void activate() {
@@ -33,18 +33,35 @@ public class Window {
         }
         do {
             User32.INSTANCE.SetForegroundWindow(hWnd);
-            Util.sleep(5);
+            lifeController.sleep(5);
         } while (!User32.INSTANCE.GetForegroundWindow().equals(hWnd));
     }
 
-    public Optional<ScreenPoint> getCenterPointOf(Image image) {
-        Image screenshot = screen.getCapture(getRectangle());
-        return screenshot.getCenterPointOf(image);
+    public Optional<ScreenPoint> getLeftTopPointOf(Image image) {
+        Rectangle rectangle = getRectangle();
+        Image windowScreenshot = Screen.INSTANCE.getCapture(rectangle);
+        Optional<Point> optionalPoint = windowScreenshot.getLeftTopPointOf(image);
+        if (optionalPoint.isEmpty()) {
+            return Optional.empty();
+        }
+        Point point = optionalPoint.get();
+        return Optional.of(new ScreenPoint(point.x() + rectangle.x, point.y() + rectangle.y));
     }
 
     private Rectangle getRectangle() {
         RECT rect = new RECT();
         User32.INSTANCE.GetWindowRect(hWnd, rect);
         return rect.toRectangle();
+    }
+
+    public Optional<ScreenPoint> getCenterPointOf(Image image) {
+        Rectangle rectangle = getRectangle();
+        Image windowScreenshot = Screen.INSTANCE.getCapture(rectangle);
+        Optional<Point> optionalPoint = windowScreenshot.getCenterPointOf(image);
+        if (optionalPoint.isEmpty()) {
+            return Optional.empty();
+        }
+        Point point = optionalPoint.get();
+        return Optional.of(new ScreenPoint(point.x() + rectangle.x, point.y() + rectangle.y));
     }
 }

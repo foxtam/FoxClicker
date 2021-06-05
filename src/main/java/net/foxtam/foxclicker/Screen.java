@@ -1,19 +1,18 @@
 package net.foxtam.foxclicker;
 
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
-
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.time.LocalTime;
 
 public class Screen {
-    
+
+    public static final Screen INSTANCE = new Screen();
+
+    private Screen() {
+    }
+
     public Image getCapture(Rectangle rectangle) {
-        BufferedImage screenCapture = Robo.INSTANCE.createScreenCapture(rectangle);
-        Mat matScreenCapture = Image.getMatFrom(screenCapture);
-        Mat grayScreen = new Mat();
-        Imgproc.cvtColor(matScreenCapture, grayScreen, Imgproc.COLOR_BGR2GRAY);
-        matScreenCapture.release();
-        return Image.fromMat(grayScreen);
+        return Image.from(
+            Robo.INSTANCE.createScreenCapture(rectangle),
+            "screenshot-" + LocalTime.now()).toGray();
     }
 }

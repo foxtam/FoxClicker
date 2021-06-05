@@ -8,6 +8,17 @@ public class KeyConfig {
     private final boolean ctrlPressed;
     private final boolean shiftPressed;
 
+    public KeyConfig(int stopKey, int pauseKey, boolean ctrlPressed, boolean shiftPressed) {
+        this.stopKey = stopKey;
+        this.pauseKey = pauseKey;
+        this.ctrlPressed = ctrlPressed;
+        this.shiftPressed = shiftPressed;
+    }
+
+    public static KeyConfig getDefault() {
+        return new KeyConfig(GlobalKeyEvent.VK_F8, GlobalKeyEvent.VK_F4, false, false);
+    }
+
     public int getStopKey() {
         return stopKey;
     }
@@ -22,16 +33,5 @@ public class KeyConfig {
 
     public boolean isShiftPressed() {
         return shiftPressed;
-    }
-
-    public KeyConfig(int stopKey, int pauseKey, boolean ctrlPressed, boolean shiftPressed) {
-        this.stopKey = stopKey;
-        this.pauseKey = pauseKey;
-        this.ctrlPressed = ctrlPressed;
-        this.shiftPressed = shiftPressed;
-    }
-
-    public static KeyConfig getDefault() {
-        return new KeyConfig(GlobalKeyEvent.VK_F8, GlobalKeyEvent.VK_F4, false, false);
     }
 }
