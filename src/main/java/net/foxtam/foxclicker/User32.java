@@ -6,6 +6,7 @@ import com.sun.jna.platform.win32.WinUser.*;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+@SuppressWarnings("UnusedReturnValue")
 public interface User32 extends StdCallLibrary {
     User32 INSTANCE = (User32) Native.load("user32", User32.class, W32APIOptions.UNICODE_OPTIONS);
 

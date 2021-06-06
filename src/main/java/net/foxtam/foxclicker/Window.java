@@ -40,11 +40,11 @@ public class Window {
     public Optional<ScreenPoint> getLeftTopPointOf(Image image) {
         Rectangle rectangle = getRectangle();
         Image windowScreenshot = Screen.INSTANCE.getCapture(rectangle);
-        Optional<Point> optionalPoint = windowScreenshot.getLeftTopPointOf(image);
+        Optional<WindowPoint> optionalPoint = windowScreenshot.getLeftTopPointOf(image);
         if (optionalPoint.isEmpty()) {
             return Optional.empty();
         }
-        Point point = optionalPoint.get();
+        WindowPoint point = optionalPoint.get();
         return Optional.of(new ScreenPoint(point.x() + rectangle.x, point.y() + rectangle.y));
     }
 
@@ -57,11 +57,11 @@ public class Window {
     public Optional<ScreenPoint> getCenterPointOf(Image image) {
         Rectangle rectangle = getRectangle();
         Image windowScreenshot = Screen.INSTANCE.getCapture(rectangle);
-        Optional<Point> optionalPoint = windowScreenshot.getCenterPointOf(image);
+        Optional<WindowPoint> optionalPoint = windowScreenshot.getCenterPointOf(image);
         if (optionalPoint.isEmpty()) {
             return Optional.empty();
         }
-        Point point = optionalPoint.get();
+        WindowPoint point = optionalPoint.get();
         return Optional.of(new ScreenPoint(point.x() + rectangle.x, point.y() + rectangle.y));
     }
 }

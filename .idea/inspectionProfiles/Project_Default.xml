@@ -2,13 +2,14 @@
   <profile version="1.0">
     <option name="myName" value="Project Default" />
     <inspection_tool class="AutoCloseableResource" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="BooleanMethodIsAlwaysInverted" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="BreakStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MissingOverrideAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreObjectMethods" value="false" />
       <option name="ignoreAnonymousClassMethods" value="false" />
     </inspection_tool>
-    <inspection_tool class="SameParameterValue" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="minimalUsageCount" value="2" />
+    <inspection_tool class="SameParameterValue" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="minimalUsageCount" value="3" />
     </inspection_tool>
   </profile>
 </component>

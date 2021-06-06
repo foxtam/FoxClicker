@@ -105,19 +105,19 @@ public class Image {
         return new Image(gray, "(gray) " + name);
     }
 
-    public Optional<Point> getCenterPointOf(Image image) {
-        Optional<Point> leftTop = getLeftTopPointOf(image);
+    public Optional<WindowPoint> getCenterPointOf(Image image) {
+        Optional<WindowPoint> leftTop = getLeftTopPointOf(image);
         if (leftTop.isEmpty()) {
             return leftTop;
         }
-        Point point = leftTop.get();
+        WindowPoint point = leftTop.get();
         return Optional.of(
-            new Point(
+            new WindowPoint(
                 point.x() + image.width() / 2,
                 point.y() + image.height() / 2));
     }
 
-    public Optional<Point> getLeftTopPointOf(Image image) {
+    public Optional<WindowPoint> getLeftTopPointOf(Image image) {
         if (this.mat.width() < image.mat.width() || this.mat.height() < image.mat.height()) {
             return Optional.empty();
         }
@@ -127,7 +127,7 @@ public class Image {
         result.release();
 
         if (loc.maxVal >= tolerance) {
-            return Optional.of(new Point((int) loc.maxLoc.x, (int) loc.maxLoc.y));
+            return Optional.of(new WindowPoint((int) loc.maxLoc.x, (int) loc.maxLoc.y));
         } else {
             return Optional.empty();
         }

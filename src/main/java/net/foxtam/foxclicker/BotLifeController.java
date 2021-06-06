@@ -18,7 +18,7 @@ public class BotLifeController {
 
     private void checkPauseOrInterrupt() {
         if (interruptedWithKey) {
-            interruptBot("Ручное завершение");
+            interruptBot("Stopped by user");
         } else {
             userPause();
         }
@@ -34,7 +34,7 @@ public class BotLifeController {
 
     private void userPause() {
         while (globalPause) {
-            if (interruptedWithKey) interruptBot("Ручное завершение");
+            if (interruptedWithKey) interruptBot("Stopped by user");
             Robo.INSTANCE.delay(10);
         }
     }
