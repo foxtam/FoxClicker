@@ -8,19 +8,17 @@ import static com.sun.jna.platform.win32.WinUser.*;
 
 public class Window {
     private final HWND hWnd;
-    private final BotLifeController lifeController;
 
-    private Window(HWND hWnd, BotLifeController lifeController) {
+    private Window(HWND hWnd) {
         this.hWnd = hWnd;
-        this.lifeController = lifeController;
     }
 
-    public static Window getByClass(String windowClassName, BotLifeController lifeController) {
-        return new Window(User32.INSTANCE.FindWindow(windowClassName, null), lifeController);
+    public static Window getByClass(String windowClassName) {
+        return new Window(User32.INSTANCE.FindWindow(windowClassName, null));
     }
 
-    public static Window getByTitle(String windowTitle, BotLifeController lifeController) {
-        return new Window(User32.INSTANCE.FindWindow(null, windowTitle), lifeController);
+    public static Window getByTitle(String windowTitle) {
+        return new Window(User32.INSTANCE.FindWindow(null, windowTitle));
     }
 
     public void activate() {
@@ -33,7 +31,7 @@ public class Window {
         }
         do {
             User32.INSTANCE.SetForegroundWindow(hWnd);
-            lifeController.sleep(5);
+            Robo.INSTANCE.delay(5);
         } while (!User32.INSTANCE.GetForegroundWindow().equals(hWnd));
     }
 
@@ -64,4 +62,14 @@ public class Window {
         WindowPoint point = optionalPoint.get();
         return Optional.of(new ScreenPoint(point.x() + rectangle.x, point.y() + rectangle.y));
     }
+
+    public boolean isImageVisibleNow(Image image) {
+        return getLeftTopPointOf(image).isPresent();
+    }
+
+    public ScreenPoint getWindowCenterPoint() {
+        Rectangle rect = getRectangle();
+        return new ScreenPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+    }
+
 }

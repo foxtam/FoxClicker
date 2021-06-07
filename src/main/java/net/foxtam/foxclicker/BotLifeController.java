@@ -33,9 +33,13 @@ public class BotLifeController {
     }
 
     private void userPause() {
-        while (globalPause) {
-            if (interruptedWithKey) interruptBot("Stopped by user");
-            Robo.INSTANCE.delay(10);
+        if (globalPause) {
+            System.out.println("User pause");
+            while (globalPause) {
+                if (interruptedWithKey) interruptBot("Stopped by user");
+                Robo.INSTANCE.delay(10);
+            }
+            System.out.println("Unpause");
         }
     }
 
