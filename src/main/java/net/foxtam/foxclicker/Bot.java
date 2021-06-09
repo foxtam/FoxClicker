@@ -9,10 +9,10 @@ import net.foxtam.foxclicker.exceptions.InterruptBotException;
 import net.foxtam.foxclicker.exceptions.WaitForImageException;
 
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.Comparator;
+import java.util.List;
 
 public abstract class Bot {
-    private static final double imageWaitingTime = 2;
     private final Window window;
     private final Mouse mouse;
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
@@ -56,65 +56,16 @@ public abstract class Bot {
 
     protected abstract void action();
 
-    protected Image waitForAnyImage(double seconds, Image... images) {
-        if (images.length == 0) throw new IllegalArgumentException("Need at least one image");
-        double startTime = getCurrentSeconds();
-        while (true) {
-            for (Image image : images) {
-                if (window.isImageVisibleNow(image)) return image;
-                lifeController.sleep(1);
-                if (getCurrentSeconds() > startTime + seconds) {
-                    throw new WaitForImageException("None of them " + Arrays.toString(images) + " did not appear for " + seconds + " sec");
-                }
-            }
-        }
-    }
-
-    private double getCurrentSeconds() {
-        return System.nanoTime() / 1_000_000_000.0;
-    }
-
     protected void sleep(double seconds) {
         lifeController.sleep((int) (seconds * 1000));
     }
 
-    protected void leftClickOn(Image image) {
-        if (!isImageVisible(image)) throw new ImageNotFoundException("Image not found: " + image);
-        //noinspection OptionalGetWithoutIsPresent
-        mouse.leftClickAt(window.getCenterPointOf(image).get());
+    protected double getCurrentSeconds() {
+        return System.nanoTime() / 1_000_000_000.0;
     }
 
-    protected boolean isImageVisible(Image image) {
-        return isImageVisible(image, imageWaitingTime);
-    }
-
-    protected boolean isImageVisible(Image image, double seconds) {
-        double startTime = getCurrentSeconds();
-        while (!window.isImageVisibleNow(image)) {
-            lifeController.sleep(1);
-            if (getCurrentSeconds() > startTime + seconds) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    protected void waitForImage(Image image, double seconds) {
-        if (!isImageVisible(image, seconds)) {
-            throw new WaitForImageException("The " + image + " did not appear for " + seconds + " sec");
-        }
-    }
-
-    public void mouseMoveTo(Image image) {
-        if (!isImageVisible(image)) throw new ImageNotFoundException("Image not found: " + image);
-        //noinspection OptionalGetWithoutIsPresent
-        mouse.moveTo(window.getCenterPointOf(image).get());
-    }
-
-    public void mouseDragTo(Image image) {
-        if (!isImageVisible(image)) throw new ImageNotFoundException("Image not found: " + image);
-        //noinspection OptionalGetWithoutIsPresent
-        mouse.dragTo(window.getCenterPointOf(image).get());
+    protected ScreenPoint getWindowCenterPoint() {
+        return window.getWindowCenterPoint();
     }
 
     protected void mouseDragDirection(Direction direction, int lengthInPixel) {
@@ -125,7 +76,101 @@ public abstract class Bot {
         mouse.leftClickAt(point);
     }
 
-    protected ScreenPoint getWindowCenterPoint() {
-        return window.getWindowCenterPoint();
+    protected void mouseMoveTo(ScreenPoint point) {
+        mouse.moveTo(point);
+    }
+
+    public class Finder {
+        private final double timeLimitInSeconds;
+        private final double tolerance;
+        private final boolean inColor;
+
+        public Finder(double timeLimitInSeconds, double tolerance, boolean inColor) {
+            this.timeLimitInSeconds = timeLimitInSeconds;
+            this.tolerance = tolerance;
+            this.inColor = inColor;
+        }
+
+        public Finder withTime(double timeLimitInSeconds) {
+            return new Finder(timeLimitInSeconds, tolerance, inColor);
+        }
+
+        public Finder withTolerance(double tolerance) {
+            return new Finder(timeLimitInSeconds, tolerance, inColor);
+        }
+
+        public Finder withInColor(boolean inColor) {
+            return new Finder(timeLimitInSeconds, tolerance, inColor);
+        }
+
+        public boolean isImageVisible(Image image) {
+            return isAnyImageVisible(image);
+        }
+
+        public boolean isAnyImageVisible(Image... images) {
+            try {
+                waitForAnyImage(images);
+                return true;
+            } catch (WaitForImageException ignore) {
+                return false;
+            }
+        }
+
+        public Image waitForAnyImage(Image... images) {
+            if (images.length == 0) throw new IllegalArgumentException("Need at least one image");
+            double startTime = getCurrentSeconds();
+            while (true) {
+                for (Image image : images) {
+                    if (window.getPointOf(image, tolerance, inColor).isPresent()) return image;
+                    lifeController.sleep(1);
+                    if (getCurrentSeconds() > startTime + timeLimitInSeconds) {
+                        throw new WaitForImageException("None of them " + Arrays.toString(images) + " did not appear for " + timeLimitInSeconds + " sec");
+                    }
+                }
+            }
+        }
+
+        public void waitUntilImageHide(Image image) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void mouseMoveTo(Image image) {
+            waitForImage(image);
+            mouse.moveTo(getCenterPointOf(image));
+        }
+
+        public void waitForImage(Image image) {
+            waitForAnyImage(image);
+        }
+
+        public ScreenPoint getCenterPointOf(Image image) {
+            return window
+                .getPointOf(image, tolerance, inColor)
+                .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
+                .orElseThrow(() -> new ImageNotFoundException("" + image));
+        }
+
+        public void mouseDragTo(Image image) {
+            waitForImage(image);
+            mouse.dragTo(getCenterPointOf(image));
+        }
+
+        public List<ScreenPoint> getAllCenterPointsOf(Image image) {
+            return window
+                .getAllPointsOf(image, tolerance, inColor)
+                .stream()
+                .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
+                .sorted(Comparator.comparingInt(ScreenPoint::x))
+                .toList();
+        }
+
+        public void leftClickAnyImage(Image... images) {
+            leftClickOn(waitForAnyImage(images));
+        }
+
+        public void leftClickOn(Image image) {
+            waitForImage(image);
+            mouse.leftClickAt(getCenterPointOf(image));
+        }
     }
 }

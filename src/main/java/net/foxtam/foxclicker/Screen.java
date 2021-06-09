@@ -13,6 +13,6 @@ public class Screen {
     public Image getCapture(Rectangle rectangle) {
         return Image.from(
             Robo.INSTANCE.createScreenCapture(rectangle),
-            "screenshot-" + LocalTime.now()).toGray();
+            "screenshot-" + LocalTime.now());
     }
 }

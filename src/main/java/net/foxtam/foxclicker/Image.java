@@ -16,24 +16,27 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.Cleaner;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 
 public class Image {
     private static final Cleaner cleaner = Cleaner.create();
-    private static final double tolerance = 0.8;
 
     static {
         nu.pattern.OpenCV.loadLocally();
     }
 
-    private final Mat mat;
+    private final Mat colorMat;
     private final String name;
+    private Mat grayMat;
 
-    private Image(Mat mat, String name) {
-        this.mat = mat;
+    private Image(Mat colorMat, String name) {
+        this.colorMat = colorMat;
         this.name = name;
-        cleaner.register(this, this.mat::release);
+        cleaner.register(this, this.colorMat::release);
     }
 
     public static Image from(BufferedImage bufferedImage, String name) {
@@ -75,7 +78,7 @@ public class Image {
     private static Image tryLoadFromFile(String path) throws IOException {
         BufferedImage image = ImageIO.read(new FileInputStream(path));
         Mat matrix = getMatFrom(image);
-        Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
+//        Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         return new Image(matrix, path);
     }
 
@@ -94,35 +97,35 @@ public class Image {
             }
             BufferedImage image = ImageIO.read(resourceAsStream);
             Mat matrix = getMatFrom(image);
-            Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
+//            Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
             return new Image(matrix, path);
         }
     }
 
-    public Image toGray() {
-        Mat gray = new Mat();
-        Imgproc.cvtColor(this.mat, gray, Imgproc.COLOR_BGR2GRAY);
-        return new Image(gray, "(gray) " + name);
+    public int width() {
+        return colorMat.width();
     }
 
-    public Optional<WindowPoint> getCenterPointOf(Image image) {
-        Optional<WindowPoint> leftTop = getLeftTopPointOf(image);
-        if (leftTop.isEmpty()) {
-            return leftTop;
-        }
-        WindowPoint point = leftTop.get();
-        return Optional.of(
-            new WindowPoint(
-                point.x() + image.width() / 2,
-                point.y() + image.height() / 2));
+    public int height() {
+        return colorMat.height();
     }
 
-    public Optional<WindowPoint> getLeftTopPointOf(Image image) {
-        if (this.mat.width() < image.mat.width() || this.mat.height() < image.mat.height()) {
+//    public Image toGray() {
+//        Mat gray = new Mat();
+//        Imgproc.cvtColor(this.colorMat, gray, Imgproc.COLOR_BGR2GRAY);
+//        return new Image(gray, "(gray) " + name);
+//    }
+
+    public Optional<WindowPoint> getPointOf(Image image, double tolerance, boolean inColor) {
+        if (this.colorMat.width() < image.colorMat.width() || this.colorMat.height() < image.colorMat.height()) {
             return Optional.empty();
         }
         Mat result = new Mat();
-        Imgproc.matchTemplate(this.mat, image.mat, result, Imgproc.TM_CCOEFF_NORMED);
+        if (inColor) {
+            Imgproc.matchTemplate(this.colorMat(), image.colorMat(), result, Imgproc.TM_CCOEFF_NORMED);
+        } else {
+            Imgproc.matchTemplate(this.grayMat(), image.grayMat(), result, Imgproc.TM_CCOEFF_NORMED);
+        }
         Core.MinMaxLocResult loc = Core.minMaxLoc(result);
         result.release();
 
@@ -133,12 +136,44 @@ public class Image {
         }
     }
 
-    private int width() {
-        return mat.width();
+    private Mat colorMat() {
+        return colorMat;
     }
 
-    private int height() {
-        return mat.height();
+    private Mat grayMat() {
+        if (grayMat == null) {
+            grayMat = new Mat();
+            cleaner.register(this, this.grayMat::release);
+            Imgproc.cvtColor(colorMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        }
+        return grayMat;
+    }
+
+    public List<WindowPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
+        if (this.colorMat.width() < image.colorMat.width() || this.colorMat.height() < image.colorMat.height()) {
+            return Collections.emptyList();
+        }
+        Mat result = new Mat();
+        if (inColor) {
+            Imgproc.matchTemplate(this.colorMat(), image.colorMat(), result, Imgproc.TM_CCOEFF_NORMED);
+        } else {
+            Imgproc.matchTemplate(this.grayMat(), image.grayMat(), result, Imgproc.TM_CCOEFF_NORMED);
+        }
+        ArrayList<WindowPoint> points = selectPoints(result, tolerance);
+        result.release();
+        return points;
+    }
+
+    private ArrayList<WindowPoint> selectPoints(Mat result, double tolerance) {
+        ArrayList<WindowPoint> points = new ArrayList<>();
+        for (int row = 0; row < result.height(); row++) {
+            for (int col = 0; col < result.width(); col++) {
+                if (result.get(row, col)[0] >= tolerance) {
+                    points.add(new WindowPoint(col, row));
+                }
+            }
+        }
+        return points;
     }
 
     @Override

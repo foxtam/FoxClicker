@@ -1,9 +1,11 @@
 package net.foxtam.foxclicker;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Optional;
 
-import static com.sun.jna.platform.win32.WinDef.*;
+import static com.sun.jna.platform.win32.WinDef.HWND;
+import static com.sun.jna.platform.win32.WinDef.RECT;
 import static com.sun.jna.platform.win32.WinUser.*;
 
 public class Window {
@@ -35,15 +37,9 @@ public class Window {
         } while (!User32.INSTANCE.GetForegroundWindow().equals(hWnd));
     }
 
-    public Optional<ScreenPoint> getLeftTopPointOf(Image image) {
-        Rectangle rectangle = getRectangle();
-        Image windowScreenshot = Screen.INSTANCE.getCapture(rectangle);
-        Optional<WindowPoint> optionalPoint = windowScreenshot.getLeftTopPointOf(image);
-        if (optionalPoint.isEmpty()) {
-            return Optional.empty();
-        }
-        WindowPoint point = optionalPoint.get();
-        return Optional.of(new ScreenPoint(point.x() + rectangle.x, point.y() + rectangle.y));
+    public ScreenPoint getWindowCenterPoint() {
+        Rectangle rect = getRectangle();
+        return new ScreenPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
     }
 
     private Rectangle getRectangle() {
@@ -52,24 +48,21 @@ public class Window {
         return rect.toRectangle();
     }
 
-    public Optional<ScreenPoint> getCenterPointOf(Image image) {
-        Rectangle rectangle = getRectangle();
-        Image windowScreenshot = Screen.INSTANCE.getCapture(rectangle);
-        Optional<WindowPoint> optionalPoint = windowScreenshot.getCenterPointOf(image);
-        if (optionalPoint.isEmpty()) {
-            return Optional.empty();
-        }
-        WindowPoint point = optionalPoint.get();
-        return Optional.of(new ScreenPoint(point.x() + rectangle.x, point.y() + rectangle.y));
-    }
-
-    public boolean isImageVisibleNow(Image image) {
-        return getLeftTopPointOf(image).isPresent();
-    }
-
-    public ScreenPoint getWindowCenterPoint() {
+    public Optional<ScreenPoint> getPointOf(Image image, double tolerance, boolean inColor) {
         Rectangle rect = getRectangle();
-        return new ScreenPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+        return Screen.INSTANCE
+            .getCapture(rect)
+            .getPointOf(image, tolerance, inColor)
+            .map(p -> new ScreenPoint(p.x() + rect.x, p.y() + rect.y));
     }
 
+    public List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
+        Rectangle rect = getRectangle();
+        return Screen.INSTANCE
+            .getCapture(rect)
+            .getAllPointsOf(image, tolerance, inColor)
+            .stream()
+            .map(p -> new ScreenPoint(p.x() + rect.x, p.y() + rect.y))
+            .toList();
+    }
 }
