@@ -44,11 +44,11 @@ public abstract class Bot {
 
     public void run() {
         try {
-            this.window.activate();
+            window.activate();
             action();
         } catch (FoxClickerException e) {
             System.out.println("Interruption reason: " + e.getMessage());
-            if (!(e instanceof InterruptBotException)) e.printStackTrace();
+            if (!(e instanceof InterruptBotException)) throw e;
         } finally {
             keyboardHook.shutdownHook();
         }
@@ -99,7 +99,7 @@ public abstract class Bot {
             return new Finder(timeLimitInSeconds, tolerance, inColor);
         }
 
-        public Finder withInColor(boolean inColor) {
+        public Finder withColor(boolean inColor) {
             return new Finder(timeLimitInSeconds, tolerance, inColor);
         }
 
@@ -124,7 +124,7 @@ public abstract class Bot {
                     if (window.getPointOf(image, tolerance, inColor).isPresent()) return image;
                     lifeController.sleep(1);
                     if (getCurrentSeconds() > startTime + timeLimitInSeconds) {
-                        throw new WaitForImageException("None of them " + Arrays.toString(images) + " did not appear for " + timeLimitInSeconds + " sec");
+                        throw new WaitForImageException("None of this " + Arrays.toString(images) + " appeared in " + timeLimitInSeconds + " seconds");
                     }
                 }
             }
@@ -140,7 +140,11 @@ public abstract class Bot {
         }
 
         public void waitForImage(Image image) {
-            waitForAnyImage(image);
+            try {
+                waitForAnyImage(image);
+            } catch (WaitForImageException e) {
+                throw new WaitForImageException(image + " didn't appear for " + timeLimitInSeconds + " seconds");
+            }
         }
 
         public ScreenPoint getCenterPointOf(Image image) {
