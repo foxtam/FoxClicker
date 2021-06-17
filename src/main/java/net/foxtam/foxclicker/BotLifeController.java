@@ -2,6 +2,8 @@ package net.foxtam.foxclicker;
 
 import net.foxtam.foxclicker.exceptions.InterruptBotException;
 
+import static net.foxtam.foxclicker.GlobalLogger.exception;
+
 public class BotLifeController {
     private boolean interruptedWithKey = false;
     private boolean globalPause = false;
@@ -24,12 +26,8 @@ public class BotLifeController {
         }
     }
 
-    public void interrupt() {
-        interruptedWithKey = true;
-    }
-
-    public boolean isGlobalPause() {
-        return globalPause;
+    private void interruptBot(String msg) {
+        throw exception(new InterruptBotException(msg));
     }
 
     private void userPause() {
@@ -43,15 +41,19 @@ public class BotLifeController {
         }
     }
 
+    public void interrupt() {
+        interruptedWithKey = true;
+    }
+
+    public boolean isGlobalPause() {
+        return globalPause;
+    }
+
     public void setGlobalPause() {
         globalPause = true;
     }
 
     public void cancelGlobalPause() {
         globalPause = false;
-    }
-
-    private void interruptBot(String msg) {
-        throw new InterruptBotException(msg);
     }
 }

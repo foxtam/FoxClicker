@@ -38,6 +38,7 @@ public class Window {
     }
 
     public ScreenPoint getWindowCenterPoint() {
+        activate();
         Rectangle rect = getRectangle();
         return new ScreenPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
     }
@@ -49,6 +50,7 @@ public class Window {
     }
 
     public Optional<ScreenPoint> getPointOf(Image image, double tolerance, boolean inColor) {
+        activate();
         Rectangle rect = getRectangle();
         return Screen.INSTANCE
             .getCapture(rect)
@@ -57,6 +59,7 @@ public class Window {
     }
 
     public List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
+        activate();
         Rectangle rect = getRectangle();
         return Screen.INSTANCE
             .getCapture(rect)

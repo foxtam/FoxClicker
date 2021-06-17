@@ -110,12 +110,6 @@ public class Image {
         return colorMat.height();
     }
 
-//    public Image toGray() {
-//        Mat gray = new Mat();
-//        Imgproc.cvtColor(this.colorMat, gray, Imgproc.COLOR_BGR2GRAY);
-//        return new Image(gray, "(gray) " + name);
-//    }
-
     public Optional<WindowPoint> getPointOf(Image image, double tolerance, boolean inColor) {
         if (this.colorMat.width() < image.colorMat.width() || this.colorMat.height() < image.colorMat.height()) {
             return Optional.empty();
@@ -179,7 +173,30 @@ public class Image {
     @Override
     public String toString() {
         return "Image{" +
-            "name='" + name + '\'' +
-            '}';
+              "name='" + name + '\'' +
+              '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Image image = (Image) o;
+        return matEquals(this.grayMat(), image.grayMat());
+    }
+
+    private static boolean matEquals(Mat src1, Mat src2) {
+        if (src1.cols() != src2.cols() || src1.rows() != src2.rows() || src1.type() != src2.type())
+            return false;
+        Mat cmpRes = new Mat();
+        Core.compare(src1, src2, cmpRes, Core.CMP_NE);
+        boolean result = Core.countNonZero(cmpRes) == 0;
+        cmpRes.release();
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException();
     }
 }
