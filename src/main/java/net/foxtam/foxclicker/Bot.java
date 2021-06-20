@@ -193,8 +193,7 @@ public abstract class Bot {
         public ScreenPoint getCenterPointOf(Image image) {
             enter(image);
             return exit(
-                  window
-                        .getPointOf(image, tolerance, inColor)
+                  window.getPointOf(image, tolerance, inColor)
                         .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
                         .orElseThrow(() -> exception(new ImageNotFoundException("" + image))));
         }
