@@ -226,7 +226,6 @@ public abstract class Bot {
 
         public void leftClickOn(Image image) {
             enter(image);
-            window.activate();
             waitForImage(image);
             mouse.leftClickAt(getCenterPointOf(image));
             exit();
