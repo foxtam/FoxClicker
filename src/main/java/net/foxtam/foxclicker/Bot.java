@@ -151,8 +151,9 @@ public abstract class Bot {
             double startTime = getCurrentSeconds();
             while (true) {
                 for (Image image : images) {
-                    lifeController.sleep(1);
+                    lifeController.checkPauseOrInterrupt();
                     if (window.getPointOf(image, tolerance, inColor).isPresent()) return exit(image);
+                    lifeController.checkPauseOrInterrupt();
                     if (getCurrentSeconds() > startTime + timeLimitInSeconds) {
                         throw exception(
                               new WaitForImageException(
@@ -225,8 +226,8 @@ public abstract class Bot {
 
         public void leftClickOn(Image image) {
             enter(image);
-            waitForImage(image);
             window.activate();
+            waitForImage(image);
             mouse.leftClickAt(getCenterPointOf(image));
             exit();
         }

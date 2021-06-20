@@ -18,7 +18,7 @@ public class BotLifeController {
         Robo.INSTANCE.delay(millis % timeQuantum);
     }
 
-    private void checkPauseOrInterrupt() {
+    public void checkPauseOrInterrupt() {
         if (interruptedWithKey) {
             interruptBot("Stopped by user");
         } else {
