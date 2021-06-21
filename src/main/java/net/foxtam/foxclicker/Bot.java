@@ -8,6 +8,7 @@ import net.foxtam.foxclicker.exceptions.ImageNotFoundException;
 import net.foxtam.foxclicker.exceptions.InterruptBotException;
 import net.foxtam.foxclicker.exceptions.WaitForImageException;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -46,6 +47,12 @@ public abstract class Bot {
                   }
               });
         exit();
+    }
+
+    public static void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+        trace(message);
+        System.exit(1);
     }
 
     public void run() {
