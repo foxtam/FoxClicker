@@ -16,11 +16,27 @@ public class Window {
     }
 
     public static Window getByClass(String windowClassName) {
-        return new Window(User32.INSTANCE.FindWindow(windowClassName, null));
+        HWND hWnd = User32.INSTANCE.FindWindow(windowClassName, null);
+        if (hWnd == null) {
+//            Bot.showErrorMessage("Can't find window with class: " + windowClassName);
+            throw new RuntimeException("Can't find window with class: " + windowClassName);
+        }
+        return new Window(hWnd);
     }
 
     public static Window getByTitle(String windowTitle) {
-        return new Window(User32.INSTANCE.FindWindow(null, windowTitle));
+        HWND hWnd = User32.INSTANCE.FindWindow(null, windowTitle);
+        if (hWnd == null) {
+//            Bot.showErrorMessage("Can't find window with title: " + windowTitle);
+            throw new RuntimeException("Can't find window with title: " + windowTitle);
+        }
+        return new Window(hWnd);
+    }
+
+    public ScreenPoint getWindowCenterPoint() {
+        activate();
+        Rectangle rect = getRectangle();
+        return new ScreenPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
     }
 
     public void activate() {
@@ -37,12 +53,6 @@ public class Window {
         } while (!User32.INSTANCE.GetForegroundWindow().equals(hWnd));
     }
 
-    public ScreenPoint getWindowCenterPoint() {
-        activate();
-        Rectangle rect = getRectangle();
-        return new ScreenPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
-    }
-
     private Rectangle getRectangle() {
         RECT rect = new RECT();
         User32.INSTANCE.GetWindowRect(hWnd, rect);
@@ -53,19 +63,19 @@ public class Window {
         activate();
         Rectangle rect = getRectangle();
         return Screen.INSTANCE
-            .getCapture(rect)
-            .getPointOf(image, tolerance, inColor)
-            .map(p -> new ScreenPoint(p.x() + rect.x, p.y() + rect.y));
+                .getCapture(rect)
+                .getPointOf(image, tolerance, inColor)
+                .map(p -> new ScreenPoint(p.x() + rect.x, p.y() + rect.y));
     }
 
     public List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
         activate();
         Rectangle rect = getRectangle();
         return Screen.INSTANCE
-            .getCapture(rect)
-            .getAllPointsOf(image, tolerance, inColor)
-            .stream()
-            .map(p -> new ScreenPoint(p.x() + rect.x, p.y() + rect.y))
-            .toList();
+                .getCapture(rect)
+                .getAllPointsOf(image, tolerance, inColor)
+                .stream()
+                .map(p -> new ScreenPoint(p.x() + rect.x, p.y() + rect.y))
+                .toList();
     }
 }

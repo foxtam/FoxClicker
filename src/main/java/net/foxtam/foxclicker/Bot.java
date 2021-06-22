@@ -49,12 +49,6 @@ public abstract class Bot {
         exit();
     }
 
-    public static void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
-        trace(message);
-        System.exit(1);
-    }
-
     public void run() {
         enter();
         try {
