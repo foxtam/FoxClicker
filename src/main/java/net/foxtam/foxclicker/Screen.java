@@ -20,11 +20,10 @@ public class Screen {
     private Image lastScreenshot;
 
     private Screen() {
-        this.lastScreenshot =
-                new Image(
-                        Robo.INSTANCE.createScreenCapture(
-                                new Rectangle(0, 0, 10, 10)),
-                        "empty");
+        BufferedImage capture =
+                Robo.INSTANCE.createScreenCapture(
+                        new Rectangle(0, 0, 10, 10));
+        this.lastScreenshot = new Image(capture, "empty");
     }
 
     public Image getCapture(Rectangle rectangle) {
