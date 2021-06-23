@@ -8,7 +8,7 @@ import net.foxtam.foxclicker.exceptions.ImageNotFoundException;
 import net.foxtam.foxclicker.exceptions.InterruptBotException;
 import net.foxtam.foxclicker.exceptions.WaitForImageException;
 
-import javax.swing.*;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -27,25 +27,25 @@ public abstract class Bot {
         this.mouse = new Mouse(lifeController);
 
         keyboardHook.addKeyListener(
-              new GlobalKeyAdapter() {
-                  @Override
-                  public void keyPressed(GlobalKeyEvent event) {
-                      if (event.getVirtualKeyCode() == keyConfig.getStopKey()) {
-                          if (event.isControlPressed() == keyConfig.isCtrlPressed()
-                                && event.isShiftPressed() == keyConfig.isShiftPressed()) {
-                              lifeController.interrupt();
-                              onStop.run();
-                          }
-                      } else if (event.getVirtualKeyCode() == keyConfig.getPauseKey()) {
-                          if (lifeController.isGlobalPause()) {
-                              lifeController.cancelGlobalPause();
-                          } else {
-                              lifeController.setGlobalPause();
-                          }
-                          onPause.run();
-                      }
-                  }
-              });
+                new GlobalKeyAdapter() {
+                    @Override
+                    public void keyPressed(GlobalKeyEvent event) {
+                        if (event.getVirtualKeyCode() == keyConfig.getStopKey()) {
+                            if (event.isControlPressed() == keyConfig.isCtrlPressed()
+                                    && event.isShiftPressed() == keyConfig.isShiftPressed()) {
+                                lifeController.interrupt();
+                                onStop.run();
+                            }
+                        } else if (event.getVirtualKeyCode() == keyConfig.getPauseKey()) {
+                            if (lifeController.isGlobalPause()) {
+                                lifeController.cancelGlobalPause();
+                            } else {
+                                lifeController.setGlobalPause();
+                            }
+                            onPause.run();
+                        }
+                    }
+                });
         exit();
     }
 
@@ -104,6 +104,10 @@ public abstract class Bot {
         exit();
     }
 
+    public Rectangle getWidowRectangle() {
+        return window.getRectangle();
+    }
+
     public class Finder {
         private final double timeLimitInSeconds;
         private final double tolerance;
@@ -157,12 +161,12 @@ public abstract class Bot {
                     lifeController.checkPauseOrInterrupt();
                     if (getCurrentSeconds() > startTime + timeLimitInSeconds) {
                         throw exception(
-                              new WaitForImageException(
-                                    "None of this "
-                                          + Arrays.toString(images)
-                                          + " appeared in "
-                                          + timeLimitInSeconds
-                                          + " seconds"));
+                                new WaitForImageException(
+                                        "None of this "
+                                                + Arrays.toString(images)
+                                                + " appeared in "
+                                                + timeLimitInSeconds
+                                                + " seconds"));
                     }
                 }
             }
@@ -186,7 +190,7 @@ public abstract class Bot {
                 waitForAnyImage(image);
             } catch (WaitForImageException e) {
                 throw exception(
-                      new WaitForImageException(image + " didn't appear for " + timeLimitInSeconds + " seconds"));
+                        new WaitForImageException(image + " didn't appear for " + timeLimitInSeconds + " seconds"));
             }
             exit();
         }
@@ -194,9 +198,9 @@ public abstract class Bot {
         public ScreenPoint getCenterPointOf(Image image) {
             enter(image);
             return exit(
-                  window.getPointOf(image, tolerance, inColor)
-                        .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
-                        .orElseThrow(() -> exception(new ImageNotFoundException("" + image))));
+                    window.getPointOf(image, tolerance, inColor)
+                            .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
+                            .orElseThrow(() -> exception(new ImageNotFoundException("" + image))));
         }
 
         public void mouseDragTo(Image image) {
@@ -210,12 +214,12 @@ public abstract class Bot {
         public List<ScreenPoint> getAllCenterPointsOf(Image image) {
             enter(image);
             return exit(
-                  window
-                        .getAllPointsOf(image, tolerance, inColor)
-                        .stream()
-                        .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
-                        .sorted(Comparator.comparingInt(ScreenPoint::x))
-                        .toList());
+                    window
+                            .getAllPointsOf(image, tolerance, inColor)
+                            .stream()
+                            .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
+                            .sorted(Comparator.comparingInt(ScreenPoint::x))
+                            .toList());
         }
 
         public void leftClickAnyImage(Image... images) {
