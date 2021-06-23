@@ -3,6 +3,7 @@ package net.foxtam.foxclicker;
 import net.foxtam.foxclicker.exceptions.LoadImageException;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import javax.imageio.ImageIO;
@@ -34,35 +35,13 @@ public class Image {
         cleaner.register(this, this.colorMat::release);
     }
 
-    public static Image loadFromFile(String path) {
-        try {
-            return tryLoadFromFile(path);
-        } catch (IOException e) {
-            throw new LoadImageException("Failed to load image: " + path, e);
-        }
-    }
-
-    private static Image tryLoadFromFile(String path) throws IOException {
-        BufferedImage image = ImageIO.read(new File(path));
-        return new Image(image, path);
-    }
-
-    public static Image loadFromResource(String path) {
-        try {
-            return tryLoadFromResource(path);
-        } catch (IOException e) {
-            throw new LoadImageException("Failed to load image: " + path, e);
-        }
-    }
-
-    private static Image tryLoadFromResource(String path) throws IOException {
-        try (InputStream resourceAsStream = Image.class.getResourceAsStream(path)) {
-            if (resourceAsStream == null) {
-                throw new IOException();
-            }
-            BufferedImage image = ImageIO.read(resourceAsStream);
-            return new Image(image, path);
-        }
+    public Image(BufferedImage image, String name, double scale) {
+        this.colorMat = new Mat();
+        Mat original = new MatExtension(image);
+        Imgproc.resize(original, this.colorMat, new Size(), scale, scale, Imgproc.INTER_AREA);
+        original.release();
+        this.name = name;
+        cleaner.register(this, this.colorMat::release);
     }
 
     public int width() {
