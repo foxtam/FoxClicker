@@ -28,14 +28,10 @@ public class Image {
     private final String name;
     private Mat grayMat;
 
-    private Image(BufferedImage image, String name) {
+    public Image(BufferedImage image, String name) {
         this.colorMat = new MatExtension(image);
         this.name = name;
         cleaner.register(this, this.colorMat::release);
-    }
-
-    public static Image from(BufferedImage image, String name) {
-        return new Image(image, name);
     }
 
     public static Image loadFromFile(String path) {
