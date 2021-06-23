@@ -53,8 +53,9 @@ public class Window {
         } while (!User32.INSTANCE.GetForegroundWindow().equals(hWnd));
     }
 
-    private Rectangle getRectangle() {
+    public Rectangle getRectangle() {
         RECT rect = new RECT();
+        activate();
         User32.INSTANCE.GetWindowRect(hWnd, rect);
         return rect.toRectangle();
     }
