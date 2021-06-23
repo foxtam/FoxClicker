@@ -8,10 +8,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ImageScaleLoader {
+public class ScaleImageLoader {
     private final double scale;
 
-    public ImageScaleLoader(double scale) {
+    public ScaleImageLoader(double scale) {
         this.scale = scale;
     }
 
