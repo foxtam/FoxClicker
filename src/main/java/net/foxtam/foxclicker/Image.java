@@ -1,19 +1,13 @@
 package net.foxtam.foxclicker;
 
-import net.foxtam.foxclicker.exceptions.BufferedImageProcessingException;
 import net.foxtam.foxclicker.exceptions.LoadImageException;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.Cleaner;
@@ -34,38 +28,14 @@ public class Image {
     private final String name;
     private Mat grayMat;
 
-    private Image(Mat colorMat, String name) {
-        this.colorMat = colorMat;
+    private Image(BufferedImage image, String name) {
+        this.colorMat = new MatExtension(image);
         this.name = name;
         cleaner.register(this, this.colorMat::release);
     }
 
-    public static Image from(BufferedImage bufferedImage, String name) {
-        return new Image(getMatFrom(bufferedImage), name);
-    }
-
-    private static Mat getMatFrom(BufferedImage bufferedImage) {
-        DataBuffer dataBuffer = bufferedImage.getRaster().getDataBuffer();
-        byte[] imgPixels;
-
-        if (dataBuffer instanceof DataBufferInt) {
-            int byteSize = bufferedImage.getWidth() * bufferedImage.getHeight();
-            imgPixels = new byte[byteSize * 3];
-            int[] imgIntegerPixels = ((DataBufferInt) dataBuffer).getData();
-            for (int i = 0; i < byteSize; i++) {
-                imgPixels[i * 3] = (byte) (imgIntegerPixels[i] & 0x000000FF);
-                imgPixels[i * 3 + 1] = (byte) ((imgIntegerPixels[i] & 0x0000FF00) >> 8);
-                imgPixels[i * 3 + 2] = (byte) ((imgIntegerPixels[i] & 0x00FF0000) >> 16);
-            }
-        } else if (dataBuffer instanceof DataBufferByte) {
-            imgPixels = ((DataBufferByte) dataBuffer).getData();
-        } else {
-            throw new BufferedImageProcessingException();
-        }
-
-        Mat mat = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), CvType.CV_8UC3);
-        mat.put(0, 0, imgPixels);
-        return mat;
+    public static Image from(BufferedImage image, String name) {
+        return new Image(image, name);
     }
 
     public static Image loadFromFile(String path) {
@@ -78,9 +48,7 @@ public class Image {
 
     private static Image tryLoadFromFile(String path) throws IOException {
         BufferedImage image = ImageIO.read(new File(path));
-        Mat matrix = getMatFrom(image);
-//        Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
-        return new Image(matrix, path);
+        return new Image(image, path);
     }
 
     public static Image loadFromResource(String path) {
@@ -97,9 +65,7 @@ public class Image {
                 throw new IOException();
             }
             BufferedImage image = ImageIO.read(resourceAsStream);
-            Mat matrix = getMatFrom(image);
-//            Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
-            return new Image(matrix, path);
+            return new Image(image, path);
         }
     }
 
@@ -174,8 +140,8 @@ public class Image {
     @Override
     public String toString() {
         return "Image{" +
-              "name='" + name + '\'' +
-              '}';
+                "name='" + name + '\'' +
+                '}';
     }
 
     @Override
