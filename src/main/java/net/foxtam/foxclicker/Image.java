@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,7 +77,7 @@ public class Image {
     }
 
     private static Image tryLoadFromFile(String path) throws IOException {
-        BufferedImage image = ImageIO.read(new FileInputStream(path));
+        BufferedImage image = ImageIO.read(new File(path));
         Mat matrix = getMatFrom(image);
 //        Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         return new Image(matrix, path);
