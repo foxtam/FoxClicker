@@ -18,8 +18,7 @@ public class Window {
     public static Window getByClass(String windowClassName) {
         HWND hWnd = User32.INSTANCE.FindWindow(windowClassName, null);
         if (hWnd == null) {
-//            Bot.showErrorMessage("Can't find window with class: " + windowClassName);
-            throw new RuntimeException("Can't find window with class: " + windowClassName);
+            throw new RuntimeException("Unable to find the window with class: " + windowClassName);
         }
         return new Window(hWnd);
     }
@@ -27,8 +26,7 @@ public class Window {
     public static Window getByTitle(String windowTitle) {
         HWND hWnd = User32.INSTANCE.FindWindow(null, windowTitle);
         if (hWnd == null) {
-//            Bot.showErrorMessage("Can't find window with title: " + windowTitle);
-            throw new RuntimeException("Can't find window with title: " + windowTitle);
+            throw new RuntimeException("Unable to find the window with title: " + windowTitle);
         }
         return new Window(hWnd);
     }
