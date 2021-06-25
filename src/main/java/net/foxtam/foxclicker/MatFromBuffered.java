@@ -9,8 +9,8 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 
-public class MatExtension extends Mat {
-    public MatExtension(BufferedImage bufferedImage) {
+public class MatFromBuffered extends Mat {
+    public MatFromBuffered(BufferedImage bufferedImage) {
         super(bufferedImage.getHeight(), bufferedImage.getWidth(), CvType.CV_8UC3);
 
         DataBuffer dataBuffer = bufferedImage.getRaster().getDataBuffer();
