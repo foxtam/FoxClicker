@@ -22,21 +22,40 @@ public class Image {
 
     private final Mat colorMat;
     private final String name;
-    private Mat grayMat;
+    private final Mat grayMat;
 
     public Image(BufferedImage image, String name) {
-        this.colorMat = new MatExtension(image);
+        colorMat = new MatFromBuffered(image);
+        cleaner.register(this, colorMat::release);
+
+        grayMat = toGrayMat(colorMat);
+        cleaner.register(this, grayMat::release);
+
         this.name = name;
-        cleaner.register(this, this.colorMat::release);
+    }
+
+    private Mat toGrayMat(Mat colored) {
+        Mat gray = new Mat();
+        Imgproc.cvtColor(colored, gray, Imgproc.COLOR_BGR2GRAY);
+        return gray;
     }
 
     public Image(BufferedImage image, String name, double scale) {
-        this.colorMat = new Mat();
-        Mat original = new MatExtension(image);
-        Imgproc.resize(original, this.colorMat, new Size(), scale, scale, Imgproc.INTER_AREA);
+        Mat original = new MatFromBuffered(image);
+        colorMat = resize(original, scale);
         original.release();
+        cleaner.register(this, colorMat::release);
+
+        grayMat = toGrayMat(colorMat);
+        cleaner.register(this, grayMat::release);
+
         this.name = name;
-        cleaner.register(this, this.colorMat::release);
+    }
+
+    private static Mat resize(Mat original, double scale) {
+        Mat resized = new Mat();
+        Imgproc.resize(original, resized, new Size(), scale, scale, Imgproc.INTER_AREA);
+        return resized;
     }
 
     public int width() {
@@ -53,9 +72,9 @@ public class Image {
         }
         Mat result = new Mat();
         if (inColor) {
-            Imgproc.matchTemplate(this.colorMat(), image.colorMat(), result, Imgproc.TM_CCOEFF_NORMED);
+            Imgproc.matchTemplate(colorMat, image.colorMat, result, Imgproc.TM_CCOEFF_NORMED);
         } else {
-            Imgproc.matchTemplate(this.grayMat(), image.grayMat(), result, Imgproc.TM_CCOEFF_NORMED);
+            Imgproc.matchTemplate(grayMat, image.grayMat, result, Imgproc.TM_CCOEFF_NORMED);
         }
         Core.MinMaxLocResult loc = Core.minMaxLoc(result);
         result.release();
@@ -67,28 +86,15 @@ public class Image {
         }
     }
 
-    private Mat colorMat() {
-        return colorMat;
-    }
-
-    private Mat grayMat() {
-        if (grayMat == null) {
-            grayMat = new Mat();
-            cleaner.register(this, this.grayMat::release);
-            Imgproc.cvtColor(colorMat, grayMat, Imgproc.COLOR_BGR2GRAY);
-        }
-        return grayMat;
-    }
-
     public List<WindowPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
         if (this.colorMat.width() < image.colorMat.width() || this.colorMat.height() < image.colorMat.height()) {
             return Collections.emptyList();
         }
         Mat result = new Mat();
         if (inColor) {
-            Imgproc.matchTemplate(this.colorMat(), image.colorMat(), result, Imgproc.TM_CCOEFF_NORMED);
+            Imgproc.matchTemplate(colorMat, image.colorMat, result, Imgproc.TM_CCOEFF_NORMED);
         } else {
-            Imgproc.matchTemplate(this.grayMat(), image.grayMat(), result, Imgproc.TM_CCOEFF_NORMED);
+            Imgproc.matchTemplate(grayMat, image.grayMat, result, Imgproc.TM_CCOEFF_NORMED);
         }
         ArrayList<WindowPoint> points = selectPoints(result, tolerance);
         result.release();
@@ -119,7 +125,7 @@ public class Image {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Image image = (Image) o;
-        return matEquals(this.grayMat(), image.grayMat());
+        return matEquals(grayMat, image.grayMat);
     }
 
     private static boolean matEquals(Mat src1, Mat src2) {
