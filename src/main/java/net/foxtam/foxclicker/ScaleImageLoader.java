@@ -1,5 +1,7 @@
 package net.foxtam.foxclicker;
 
+import lombok.Cleanup;
+import lombok.SneakyThrows;
 import net.foxtam.foxclicker.exceptions.LoadImageException;
 
 import javax.imageio.ImageIO;
@@ -15,34 +17,20 @@ public class ScaleImageLoader {
         this.scale = scale;
     }
 
+    @SneakyThrows
     public Image loadFromFile(String path) {
-        try {
-            return tryLoadFromFile(path);
-        } catch (IOException e) {
-            throw new LoadImageException("Failed to load image: " + path, e);
-        }
-    }
-
-    private Image tryLoadFromFile(String path) throws IOException {
         BufferedImage image = ImageIO.read(new File(path));
         return new Image(image, path, scale);
     }
 
+    @SneakyThrows
     public Image loadFromResource(String path) {
-        try {
-            return tryLoadFromResource(path);
-        } catch (IOException e) {
-            throw new LoadImageException("Failed to load image: " + path, e);
+        @Cleanup
+        InputStream resourceAsStream = Image.class.getResourceAsStream(path);
+        if (resourceAsStream == null) {
+            throw new IOException("Failed to load resource: " + path);
         }
-    }
-
-    private Image tryLoadFromResource(String path) throws IOException {
-        try (InputStream resourceAsStream = Image.class.getResourceAsStream(path)) {
-            if (resourceAsStream == null) {
-                throw new IOException();
-            }
-            BufferedImage image = ImageIO.read(resourceAsStream);
-            return new Image(image, path, scale);
-        }
+        BufferedImage image = ImageIO.read(resourceAsStream);
+        return new Image(image, path, scale);
     }
 }
