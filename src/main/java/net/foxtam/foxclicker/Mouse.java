@@ -32,11 +32,11 @@ public class Mouse {
     }
 
     public void dragTo(ScreenPoint point) {
-        Robo.INSTANCE.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        Robo.getInstance().mousePress(InputEvent.BUTTON1_DOWN_MASK);
         lifeController.sleep(mouseDelay);
         moveTo(point);
         lifeController.sleep(mouseDelay);
-        Robo.INSTANCE.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        Robo.getInstance().mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         lifeController.sleep(mouseDelay);
     }
 
@@ -64,12 +64,12 @@ public class Mouse {
                 int newY = (int) (currentY + dy * step);
                 ScreenPoint real;
                 do {
-                    Robo.INSTANCE.mouseMove(newX, newY);
+                    Robo.getInstance().mouseMove(newX, newY);
                     real = getCurrentMouseLocation();
                 } while (real.x() != newX || real.y() != newY);
             }
 
-            Robo.INSTANCE.mouseMove(targetX, targetY);
+            Robo.getInstance().mouseMove(targetX, targetY);
             lifeController.sleep(100);
         }
     }
@@ -90,8 +90,8 @@ public class Mouse {
     }
 
     private void clickInPlace(int button) {
-        Robo.INSTANCE.mousePress(button);
+        Robo.getInstance().mousePress(button);
         lifeController.sleep(100);
-        Robo.INSTANCE.mouseRelease(button);
+        Robo.getInstance().mouseRelease(button);
     }
 }

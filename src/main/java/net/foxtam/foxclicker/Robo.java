@@ -1,17 +1,20 @@
 package net.foxtam.foxclicker;
 
-import net.foxtam.foxclicker.exceptions.AWTRuntimeException;
+import lombok.SneakyThrows;
 
 import java.awt.*;
 
 public class Robo {
-    public static final Robot INSTANCE;
+    private static Robot INSTANCE;
 
-    static {
-        try {
+    private Robo() {
+    }
+
+    @SneakyThrows
+    public static synchronized Robot getInstance() {
+        if (INSTANCE == null) {
             INSTANCE = new Robot();
-        } catch (AWTException e) {
-            throw new AWTRuntimeException(e);
         }
+        return INSTANCE;
     }
 }

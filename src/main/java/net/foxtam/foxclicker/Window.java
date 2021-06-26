@@ -47,7 +47,7 @@ public class Window {
         }
         do {
             User32.INSTANCE.SetForegroundWindow(hWnd);
-            Robo.INSTANCE.delay(5);
+            Robo.getInstance().delay(5);
         } while (!User32.INSTANCE.GetForegroundWindow().equals(hWnd));
     }
 

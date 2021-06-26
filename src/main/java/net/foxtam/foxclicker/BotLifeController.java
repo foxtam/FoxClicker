@@ -12,10 +12,10 @@ public class BotLifeController {
         int timeQuantum = 500;
         for (int i = 1; i <= millis / timeQuantum; i++) {
             checkPauseOrInterrupt();
-            Robo.INSTANCE.delay(timeQuantum);
+            Robo.getInstance().delay(timeQuantum);
         }
         checkPauseOrInterrupt();
-        Robo.INSTANCE.delay(millis % timeQuantum);
+        Robo.getInstance().delay(millis % timeQuantum);
     }
 
     public void checkPauseOrInterrupt() {
@@ -35,7 +35,7 @@ public class BotLifeController {
             System.out.println("User pause");
             while (globalPause) {
                 if (interruptedWithKey) interruptBot("Stopped by user");
-                Robo.INSTANCE.delay(10);
+                Robo.getInstance().delay(10);
             }
             System.out.println("Unpause");
         }

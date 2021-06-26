@@ -21,13 +21,13 @@ public class Screen {
 
     private Screen() {
         BufferedImage capture =
-                Robo.INSTANCE.createScreenCapture(
+                Robo.getInstance().createScreenCapture(
                         new Rectangle(0, 0, 10, 10));
         this.lastScreenshot = new Image(capture, "empty");
     }
 
     public Image getCapture(Rectangle rectangle) {
-        BufferedImage screenBuffered = Robo.INSTANCE.createScreenCapture(rectangle);
+        BufferedImage screenBuffered = Robo.getInstance().createScreenCapture(rectangle);
         LocalTime now = LocalTime.now();
         Image screenImage = new Image(screenBuffered, "screenshot-" + now);
         saveImage(screenImage, screenBuffered, now);
