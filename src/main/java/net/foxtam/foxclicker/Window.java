@@ -61,7 +61,7 @@ public class Window {
     public Optional<ScreenPoint> getPointOf(Image image, double tolerance, boolean inColor) {
         activate();
         Rectangle rect = getRectangle();
-        return Screen.INSTANCE
+        return Screen.getInstance()
                 .getCapture(rect)
                 .getPointOf(image, tolerance, inColor)
                 .map(p -> new ScreenPoint(p.x() + rect.x, p.y() + rect.y));
@@ -70,7 +70,7 @@ public class Window {
     public List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
         activate();
         Rectangle rect = getRectangle();
-        return Screen.INSTANCE
+        return Screen.getInstance()
                 .getCapture(rect)
                 .getAllPointsOf(image, tolerance, inColor)
                 .stream()
