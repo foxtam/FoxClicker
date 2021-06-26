@@ -1,9 +1,10 @@
 package net.foxtam.foxclicker;
 
+import lombok.SneakyThrows;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalTime;
@@ -13,10 +14,10 @@ import java.util.Queue;
 
 public class Screen {
 
-    public static final Screen INSTANCE = new Screen();
-    private static final Queue<Path> screenshotPathQueue = new LinkedList<>();
-    private static final Path screenDirectory = GlobalLogger.LOG_DIRECTORY.resolve("screen");
     private static final int numberOfLogScreenshots = 500;
+    private static Screen INSTANCE;
+    private final Queue<Path> screenshotPathQueue = new LinkedList<>();
+    private final Path screenDirectory = GlobalLogger.LOG_DIRECTORY.resolve("screen");
     private Image lastScreenshot;
 
     private Screen() {
@@ -24,6 +25,13 @@ public class Screen {
                 Robo.getInstance().createScreenCapture(
                         new Rectangle(0, 0, 10, 10));
         this.lastScreenshot = new Image(capture, "empty");
+    }
+
+    public static synchronized Screen getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Screen();
+        }
+        return INSTANCE;
     }
 
     public Image getCapture(Rectangle rectangle) {
@@ -40,20 +48,18 @@ public class Screen {
         thread.start();
     }
 
+    @SneakyThrows
     private void save(Image image, BufferedImage buffered, LocalTime time) {
         synchronized (screenshotPathQueue) {
-            try {
-                if (!image.equals(lastScreenshot)) {
-                    trySave(buffered, time);
-                    lastScreenshot = image;
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (!image.equals(lastScreenshot)) {
+                trySave(buffered, time);
+                lastScreenshot = image;
             }
         }
     }
 
-    private void trySave(BufferedImage image, LocalTime time) throws IOException {
+    @SneakyThrows
+    private void trySave(BufferedImage image, LocalTime time) {
         String strTime = time.format(DateTimeFormatter.ofPattern("HH-mm-ss-SSS"));
         Path imagePath = screenDirectory.resolve(strTime + ".jpeg");
         if (Files.notExists(screenDirectory)) Files.createDirectories(screenDirectory);
