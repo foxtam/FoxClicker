@@ -1,5 +1,7 @@
 package net.foxtam.foxclicker;
 
+import net.foxtam.foxclicker.exceptions.UnableToFindWindow;
+
 import java.awt.*;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +20,7 @@ public class Window {
     public static Window getByClass(String windowClassName) {
         HWND hWnd = User32.INSTANCE.FindWindow(windowClassName, null);
         if (hWnd == null) {
-            throw new RuntimeException("Unable to find the window with class: " + windowClassName);
+            throw new UnableToFindWindow("Unable to find the window with class: " + windowClassName);
         }
         return new Window(hWnd);
     }
@@ -26,7 +28,7 @@ public class Window {
     public static Window getByTitle(String windowTitle) {
         HWND hWnd = User32.INSTANCE.FindWindow(null, windowTitle);
         if (hWnd == null) {
-            throw new RuntimeException("Unable to find the window with title: " + windowTitle);
+            throw new UnableToFindWindow("Unable to find the window with title: " + windowTitle);
         }
         return new Window(hWnd);
     }
