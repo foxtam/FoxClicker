@@ -66,7 +66,7 @@ public class Image {
         return colorMat.height();
     }
 
-    public Optional<WindowPoint> getPointOf(Image image, double tolerance, boolean inColor) {
+    public Optional<LocalPoint> getPointOf(Image image, double tolerance, boolean inColor) {
         if (this.colorMat.width() < image.colorMat.width() || this.colorMat.height() < image.colorMat.height()) {
             return Optional.empty();
         }
@@ -80,13 +80,13 @@ public class Image {
         result.release();
 
         if (loc.maxVal >= tolerance) {
-            return Optional.of(new WindowPoint((int) loc.maxLoc.x, (int) loc.maxLoc.y));
+            return Optional.of(LocalPoint.of((int) loc.maxLoc.x, (int) loc.maxLoc.y));
         } else {
             return Optional.empty();
         }
     }
 
-    public List<WindowPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
+    public List<LocalPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
         if (this.colorMat.width() < image.colorMat.width() || this.colorMat.height() < image.colorMat.height()) {
             return Collections.emptyList();
         }
@@ -96,17 +96,17 @@ public class Image {
         } else {
             Imgproc.matchTemplate(grayMat, image.grayMat, result, Imgproc.TM_CCOEFF_NORMED);
         }
-        ArrayList<WindowPoint> points = selectPoints(result, tolerance);
+        ArrayList<LocalPoint> points = selectPoints(result, tolerance);
         result.release();
         return points;
     }
 
-    private ArrayList<WindowPoint> selectPoints(Mat result, double tolerance) {
-        ArrayList<WindowPoint> points = new ArrayList<>();
+    private ArrayList<LocalPoint> selectPoints(Mat result, double tolerance) {
+        ArrayList<LocalPoint> points = new ArrayList<>();
         for (int row = 0; row < result.height(); row++) {
             for (int col = 0; col < result.width(); col++) {
                 if (result.get(row, col)[0] >= tolerance) {
-                    points.add(new WindowPoint(col, row));
+                    points.add(LocalPoint.of(col, row));
                 }
             }
         }
