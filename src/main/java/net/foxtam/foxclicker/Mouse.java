@@ -19,16 +19,16 @@ public class Mouse {
     public void drag(Direction direction, int lengthInPixel) {
         ScreenPoint point = getCurrentMouseLocation();
         switch (direction) {
-            case UP -> dragTo(new ScreenPoint(point.x(), point.y() - lengthInPixel));
-            case DOWN -> dragTo(new ScreenPoint(point.x(), point.y() + lengthInPixel));
-            case RIGHT -> dragTo(new ScreenPoint(point.x() + lengthInPixel, point.y()));
-            case LEFT -> dragTo(new ScreenPoint(point.x() - lengthInPixel, point.y()));
+            case UP -> dragTo(ScreenPoint.of(point.getX(), point.getY() - lengthInPixel));
+            case DOWN -> dragTo(ScreenPoint.of(point.getX(), point.getY() + lengthInPixel));
+            case RIGHT -> dragTo(ScreenPoint.of(point.getX() + lengthInPixel, point.getY()));
+            case LEFT -> dragTo(ScreenPoint.of(point.getX() - lengthInPixel, point.getY()));
         }
     }
 
     private ScreenPoint getCurrentMouseLocation() {
         Point location = MouseInfo.getPointerInfo().getLocation();
-        return new ScreenPoint(location.x, location.y);
+        return ScreenPoint.of(location.x, location.y);
     }
 
     public void dragTo(ScreenPoint point) {
@@ -42,12 +42,12 @@ public class Mouse {
 
     public void moveTo(ScreenPoint point) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int targetX = clip(point.x(), 0, screenSize.width - 1);
-        int targetY = clip(point.y(), 0, screenSize.height - 1);
+        int targetX = clip(point.getX(), 0, screenSize.width - 1);
+        int targetY = clip(point.getY(), 0, screenSize.height - 1);
 
         ScreenPoint currentPoint = getCurrentMouseLocation();
-        int currentX = currentPoint.x();
-        int currentY = currentPoint.y();
+        int currentX = currentPoint.getX();
+        int currentY = currentPoint.getY();
         double diffX = targetX - currentX;
         double diffY = targetY - currentY;
         
@@ -66,7 +66,7 @@ public class Mouse {
                 do {
                     Robo.getInstance().mouseMove(newX, newY);
                     real = getCurrentMouseLocation();
-                } while (real.x() != newX || real.y() != newY);
+                } while (real.getX() != newX || real.getY() != newY);
             }
 
             Robo.getInstance().mouseMove(targetX, targetY);

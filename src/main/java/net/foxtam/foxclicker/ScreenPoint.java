@@ -1,7 +1,9 @@
 package net.foxtam.foxclicker;
 
-public record ScreenPoint(int x, int y) {
-    public ScreenPoint shift(int dx, int dy) {
-        return new ScreenPoint(x + dx, y + dy);
-    }
+import lombok.Value;
+
+@Value(staticConstructor = "of")
+public class ScreenPoint {
+    int x;
+    int y;
 }

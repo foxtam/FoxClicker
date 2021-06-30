@@ -199,7 +199,7 @@ public abstract class Bot {
             enter(image);
             return exit(
                     window.getPointOf(image, tolerance, inColor)
-                            .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
+                            .map(p -> ScreenPoint.of(p.getX() + image.width() / 2, p.getY() + image.height() / 2))
                             .orElseThrow(() -> exception(new ImageNotFoundException("" + image))));
         }
 
@@ -217,8 +217,8 @@ public abstract class Bot {
                     window
                             .getAllPointsOf(image, tolerance, inColor)
                             .stream()
-                            .map(p -> new ScreenPoint(p.x() + image.width() / 2, p.y() + image.height() / 2))
-                            .sorted(Comparator.comparingInt(ScreenPoint::x))
+                            .map(p -> ScreenPoint.of(p.getX() + image.width() / 2, p.getY() + image.height() / 2))
+                            .sorted(Comparator.comparingInt(ScreenPoint::getX))
                             .toList());
         }
 

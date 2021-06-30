@@ -36,7 +36,7 @@ public class Window {
     public ScreenPoint getWindowCenterPoint() {
         activate();
         Rectangle rect = getRectangle();
-        return new ScreenPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+        return ScreenPoint.of(rect.x + rect.width / 2, rect.y + rect.height / 2);
     }
 
     public void activate() {
@@ -66,7 +66,7 @@ public class Window {
         return Screen.getInstance()
                 .getCapture(rect)
                 .getPointOf(image, tolerance, inColor)
-                .map(p -> new ScreenPoint(p.getX() + rect.x, p.getY() + rect.y));
+                .map(p -> ScreenPoint.of(p.getX() + rect.x, p.getY() + rect.y));
     }
 
     public List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
@@ -76,7 +76,7 @@ public class Window {
                 .getCapture(rect)
                 .getAllPointsOf(image, tolerance, inColor)
                 .stream()
-                .map(p -> new ScreenPoint(p.getX() + rect.x, p.getY() + rect.y))
+                .map(p -> ScreenPoint.of(p.getX() + rect.x, p.getY() + rect.y))
                 .toList();
     }
 }
