@@ -1,15 +1,49 @@
 package net.foxtam.foxclicker;
 
+import lc.kra.system.keyboard.GlobalKeyboardHook;
+import lc.kra.system.keyboard.event.GlobalKeyAdapter;
+import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import net.foxtam.foxclicker.exceptions.InterruptBotException;
 
 import static net.foxtam.foxclicker.GlobalLogger.exception;
 
-public class BotLifeController {
-    private boolean interruptedWithKey = false;
-    private boolean globalPause = false;
+enum State {
+    RUN, PAUSE, STOP;
+
+    public boolean isPause() {
+        return this == PAUSE;
+    }
+
+    public boolean isStop() {
+        return this == STOP;
+    }
+}
+
+public class BotLifeController implements AutoCloseable {
+    private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
+    private State state = State.RUN;
+
+    public BotLifeController(KeyConfig keyConfig, Runnable onStop, Runnable onPause) {
+        keyboardHook.addKeyListener(
+                new GlobalKeyAdapter() {
+                    @Override
+                    public void keyPressed(GlobalKeyEvent event) {
+                        if (event.isControlPressed() == keyConfig.isCtrlPressed()
+                                && event.isShiftPressed() == keyConfig.isShiftPressed()) {
+                            if (event.getVirtualKeyCode() == keyConfig.getStopKey()) {
+                                state = State.STOP;
+                                onStop.run();
+                            } else if (event.getVirtualKeyCode() == keyConfig.getPauseKey()) {
+                                state = state.isPause() ? State.RUN : State.PAUSE;
+                                onPause.run();
+                            }
+                        }
+                    }
+                });
+    }
 
     public void sleep(int millis) {
-        int timeQuantum = 500;
+        int timeQuantum = 100;
         for (int i = 1; i <= millis / timeQuantum; i++) {
             checkPauseOrInterrupt();
             Robo.getInstance().delay(timeQuantum);
@@ -19,10 +53,9 @@ public class BotLifeController {
     }
 
     public void checkPauseOrInterrupt() {
-        if (interruptedWithKey) {
-            interruptBot("Stopped by user");
-        } else {
-            userPause();
+        switch (state) {
+            case STOP -> interruptBot("Stopped by user");
+            case PAUSE -> pause();
         }
     }
 
@@ -30,30 +63,15 @@ public class BotLifeController {
         throw exception(new InterruptBotException(msg));
     }
 
-    private void userPause() {
-        if (globalPause) {
-            System.out.println("User pause");
-            while (globalPause) {
-                if (interruptedWithKey) interruptBot("Stopped by user");
-                Robo.getInstance().delay(10);
-            }
-            System.out.println("Unpause");
+    private void pause() {
+        while (state.isPause()) {
+            if (state.isStop()) interruptBot("Stopped by user");
+            Robo.getInstance().delay(10);
         }
     }
 
-    public void interrupt() {
-        interruptedWithKey = true;
-    }
-
-    public boolean isGlobalPause() {
-        return globalPause;
-    }
-
-    public void setGlobalPause() {
-        globalPause = true;
-    }
-
-    public void cancelGlobalPause() {
-        globalPause = false;
+    @Override
+    public void close() {
+        keyboardHook.shutdownHook();
     }
 }

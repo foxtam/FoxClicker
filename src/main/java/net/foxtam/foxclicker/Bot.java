@@ -18,34 +18,13 @@ import static net.foxtam.foxclicker.GlobalLogger.*;
 public abstract class Bot {
     private final Window window;
     private final Mouse mouse;
-    private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
-    private final BotLifeController lifeController = new BotLifeController();
+    private final BotLifeController lifeController;
 
     protected Bot(KeyConfig keyConfig, Window window, Runnable onStop, Runnable onPause) {
         enter(keyConfig, window);
         this.window = window;
+        this.lifeController = new BotLifeController(keyConfig, onStop, onPause);
         this.mouse = new Mouse(lifeController);
-
-        keyboardHook.addKeyListener(
-                new GlobalKeyAdapter() {
-                    @Override
-                    public void keyPressed(GlobalKeyEvent event) {
-                        if (event.getVirtualKeyCode() == keyConfig.getStopKey()) {
-                            if (event.isControlPressed() == keyConfig.isCtrlPressed()
-                                    && event.isShiftPressed() == keyConfig.isShiftPressed()) {
-                                lifeController.interrupt();
-                                onStop.run();
-                            }
-                        } else if (event.getVirtualKeyCode() == keyConfig.getPauseKey()) {
-                            if (lifeController.isGlobalPause()) {
-                                lifeController.cancelGlobalPause();
-                            } else {
-                                lifeController.setGlobalPause();
-                            }
-                            onPause.run();
-                        }
-                    }
-                });
         exit();
     }
 
@@ -61,7 +40,7 @@ public abstract class Bot {
         } catch (RuntimeException e) {
             throw exception(e);
         } finally {
-            keyboardHook.shutdownHook();
+            lifeController.close();
         }
         exit();
     }
