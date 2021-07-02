@@ -1,8 +1,5 @@
 package net.foxtam.foxclicker;
 
-import lc.kra.system.keyboard.GlobalKeyboardHook;
-import lc.kra.system.keyboard.event.GlobalKeyAdapter;
-import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import net.foxtam.foxclicker.exceptions.FoxClickerException;
 import net.foxtam.foxclicker.exceptions.ImageNotFoundException;
 import net.foxtam.foxclicker.exceptions.InterruptBotException;
@@ -16,13 +13,11 @@ import java.util.List;
 import static net.foxtam.foxclicker.GlobalLogger.*;
 
 public abstract class Bot {
-    private final Window window;
     private final Mouse mouse;
     private final BotLifeController lifeController;
 
-    protected Bot(KeyConfig keyConfig, Window window, Runnable onStop, Runnable onPause) {
-        enter(keyConfig, window);
-        this.window = window;
+    protected Bot(KeyConfig keyConfig, Runnable onStop, Runnable onPause) {
+        enter(keyConfig);
         this.lifeController = new BotLifeController(keyConfig, onStop, onPause);
         this.mouse = new Mouse(lifeController);
         exit();
@@ -31,7 +26,6 @@ public abstract class Bot {
     public void run() {
         enter();
         try {
-            window.activate();
             action();
         } catch (FoxClickerException e) {
             trace("Interruption reason: " + e.getMessage());
@@ -57,61 +51,33 @@ public abstract class Bot {
         return System.nanoTime() / 1_000_000_000.0;
     }
 
-    protected ScreenPoint getWindowCenterPoint() {
-        enter();
-        return exit(window.getWindowCenterPoint());
-    }
-
-    protected void mouseDragDirection(Direction direction, int lengthInPixel) {
-        enter(direction, lengthInPixel);
-        window.activate();
-        mouse.drag(direction, lengthInPixel);
-        exit();
-    }
-
-    protected void leftClickAt(ScreenPoint point) {
-        enter(point);
-        window.activate();
-        mouse.leftClickAt(point);
-        exit();
-    }
-
-    protected void mouseMoveTo(ScreenPoint point) {
-        enter(point);
-        window.activate();
-        mouse.moveTo(point);
-        exit();
-    }
-
-    public Rectangle getWidowRectangle() {
-        return window.getRectangle();
-    }
-
-    public class Finder {
+    public class Frame {
+        private final Window window;
         private final double timeLimitInSeconds;
         private final double tolerance;
         private final boolean inColor;
 
-        public Finder(double timeLimitInSeconds, double tolerance, boolean inColor) {
+        public Frame(Window window, double timeLimitInSeconds, double tolerance, boolean inColor) {
             enter(timeLimitInSeconds, tolerance, inColor);
+            this.window = window;
             this.timeLimitInSeconds = timeLimitInSeconds;
             this.tolerance = tolerance;
             this.inColor = inColor;
             exit();
         }
 
-        public Finder withTime(double timeLimitInSeconds) {
+        public Frame withTime(double timeLimitInSeconds) {
             enter(timeLimitInSeconds);
-            return exit(new Finder(timeLimitInSeconds, tolerance, inColor));
+            return exit(new Frame(window, timeLimitInSeconds, tolerance, inColor));
         }
 
-        public Finder withTolerance(double tolerance) {
-            return new Finder(timeLimitInSeconds, tolerance, inColor);
+        public Frame withTolerance(double tolerance) {
+            return new Frame(window, timeLimitInSeconds, tolerance, inColor);
         }
 
-        public Finder withColor(boolean inColor) {
+        public Frame withColor(boolean inColor) {
             enter(inColor);
-            return exit(new Finder(timeLimitInSeconds, tolerance, inColor));
+            return exit(new Frame(window, timeLimitInSeconds, tolerance, inColor));
         }
 
         public boolean isImageVisible(Image image) {
@@ -212,6 +178,36 @@ public abstract class Bot {
             waitForImage(image);
             mouse.leftClickAt(getCenterPointOf(image));
             exit();
+        }
+
+        protected ScreenPoint getWindowCenterPoint() {
+            enter();
+            return exit(window.getWindowCenterPoint());
+        }
+
+        protected void mouseDragDirection(Direction direction, int lengthInPixel) {
+            enter(direction, lengthInPixel);
+            window.activate();
+            mouse.drag(direction, lengthInPixel);
+            exit();
+        }
+
+        protected void leftClickAt(ScreenPoint point) {
+            enter(point);
+            window.activate();
+            mouse.leftClickAt(point);
+            exit();
+        }
+
+        protected void mouseMoveTo(ScreenPoint point) {
+            enter(point);
+            window.activate();
+            mouse.moveTo(point);
+            exit();
+        }
+
+        public Rectangle getWidowRectangle() {
+            return window.getRectangle();
         }
     }
 }

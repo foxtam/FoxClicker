@@ -1,0 +1,9 @@
+package net.foxtam.foxclicker;
+
+import lombok.Value;
+
+@Value(staticConstructor = "of")
+public class Pair<T1, T2> {
+    T1 first;
+    T2 second;
+}

@@ -12,25 +12,27 @@ import static com.sun.jna.platform.win32.WinUser.*;
 
 public class Window {
     private final HWND hWnd;
+    private final Screen screen;
 
-    private Window(HWND hWnd) {
+    private Window(HWND hWnd, Screen screen) {
         this.hWnd = hWnd;
+        this.screen = screen;
     }
 
-    public static Window getByClass(String windowClassName) {
+    public static Window getByClass(String windowClassName, Screen screen) {
         HWND hWnd = User32.INSTANCE.FindWindow(windowClassName, null);
         if (hWnd == null) {
             throw new UnableToFindWindow("Unable to find the window with class: " + windowClassName);
         }
-        return new Window(hWnd);
+        return new Window(hWnd, screen);
     }
 
-    public static Window getByTitle(String windowTitle) {
+    public static Window getByTitle(String windowTitle, Screen screen) {
         HWND hWnd = User32.INSTANCE.FindWindow(null, windowTitle);
         if (hWnd == null) {
             throw new UnableToFindWindow("Unable to find the window with title: " + windowTitle);
         }
-        return new Window(hWnd);
+        return new Window(hWnd, screen);
     }
 
     public ScreenPoint getWindowCenterPoint() {
@@ -63,8 +65,7 @@ public class Window {
     public Optional<ScreenPoint> getPointOf(Image image, double tolerance, boolean inColor) {
         activate();
         Rectangle rect = getRectangle();
-        return Screen.getInstance()
-                .getCapture(rect)
+        return Image.from(screen.getScreenCapture(rect))
                 .getPointOf(image, tolerance, inColor)
                 .map(p -> ScreenPoint.of(p.getX() + rect.x, p.getY() + rect.y));
     }
@@ -72,8 +73,7 @@ public class Window {
     public List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
         activate();
         Rectangle rect = getRectangle();
-        return Screen.getInstance()
-                .getCapture(rect)
+        return Image.from(screen.getScreenCapture(rect))
                 .getAllPointsOf(image, tolerance, inColor)
                 .stream()
                 .map(p -> ScreenPoint.of(p.getX() + rect.x, p.getY() + rect.y))

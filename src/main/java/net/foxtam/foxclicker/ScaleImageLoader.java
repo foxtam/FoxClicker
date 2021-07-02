@@ -25,7 +25,7 @@ public class ScaleImageLoader {
 
     private Image tryLoadFromFile(String path) throws IOException {
         BufferedImage image = ImageIO.read(new File(path));
-        return new Image(image, path, scale);
+        return Image.from(image, path, scale);
     }
 
     public Image loadFromResource(String path) {
@@ -42,7 +42,7 @@ public class ScaleImageLoader {
                 throw new IOException();
             }
             BufferedImage image = ImageIO.read(resourceAsStream);
-            return new Image(image, path, scale);
+            return Image.from(image, path, scale);
         }
     }
 }

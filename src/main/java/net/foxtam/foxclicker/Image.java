@@ -24,23 +24,25 @@ public class Image {
     private final String name;
     private final Mat grayMat;
 
-    public Image(BufferedImage image, String name) {
-        colorMat = new MatFromBuffered(image);
-        cleaner.register(this, colorMat::release);
-
-        grayMat = toGrayMat(colorMat);
-        cleaner.register(this, grayMat::release);
-
-        this.name = name;
+    public static Image from(BufferedImage bufferedImage) {
+        return Image.from(bufferedImage, "no name");
+    }
+    
+    public static Image from(BufferedImage bufferedImage, String name) {
+        return new Image(bufferedImage, name, 1.0);
     }
 
+    public static Image from(BufferedImage bufferedImage, String name, double scale) {
+        return new Image(bufferedImage, name, scale);
+    }
+    
     private Mat toGrayMat(Mat colored) {
         Mat gray = new Mat();
         Imgproc.cvtColor(colored, gray, Imgproc.COLOR_BGR2GRAY);
         return gray;
     }
 
-    public Image(BufferedImage image, String name, double scale) {
+    private Image(BufferedImage image, String name, double scale) {
         Mat original = new MatFromBuffered(image);
         colorMat = resize(original, scale);
         original.release();
