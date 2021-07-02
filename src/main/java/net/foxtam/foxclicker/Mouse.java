@@ -8,7 +8,7 @@ import static java.lang.Math.*;
 public class Mouse {
 
     private static final int mouseSpeed = 2000;
-    private static final int mouseDelay = 60;
+    private static final int mouseDelay = 100;
 
     private final BotLifeController lifeController;
 
@@ -91,7 +91,7 @@ public class Mouse {
 
     private void clickInPlace(int button) {
         Robo.getInstance().mousePress(button);
-        lifeController.sleep(100);
+        lifeController.sleep(mouseDelay);
         Robo.getInstance().mouseRelease(button);
     }
 }
