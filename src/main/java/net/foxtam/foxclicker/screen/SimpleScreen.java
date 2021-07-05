@@ -1,4 +1,6 @@
-package net.foxtam.foxclicker;
+package net.foxtam.foxclicker.screen;
+
+import net.foxtam.foxclicker.Robo;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

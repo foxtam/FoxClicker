@@ -1,6 +1,8 @@
-package net.foxtam.foxclicker;
+package net.foxtam.foxclicker.screen;
 
 import lombok.SneakyThrows;
+import net.foxtam.foxclicker.GlobalLogger;
+import net.foxtam.foxclicker.Robo;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

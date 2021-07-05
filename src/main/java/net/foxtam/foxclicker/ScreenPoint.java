@@ -6,4 +6,8 @@ import lombok.Value;
 public class ScreenPoint {
     int x;
     int y;
+
+    public ScreenPoint shift(int dx, int dy) {
+        return ScreenPoint.of(x + dx, y + dy);
+    }
 }

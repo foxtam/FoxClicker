@@ -1,6 +1,8 @@
 package net.foxtam.foxclicker;
 
+import lombok.With;
 import net.foxtam.foxclicker.exceptions.UnableToFindWindow;
+import net.foxtam.foxclicker.screen.Screen;
 
 import java.awt.*;
 import java.util.List;
@@ -12,6 +14,7 @@ import static com.sun.jna.platform.win32.WinUser.*;
 
 public class Window {
     private final HWND hWnd;
+    @With
     private final Screen screen;
 
     private Window(HWND hWnd, Screen screen) {

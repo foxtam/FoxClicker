@@ -1,8 +1,10 @@
-package net.foxtam.foxclicker;
+package net.foxtam.foxclicker.screen;
 
 import lombok.AllArgsConstructor;
+import net.foxtam.foxclicker.Image;
+import net.foxtam.foxclicker.Pair;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
 

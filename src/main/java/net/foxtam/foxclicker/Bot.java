@@ -1,5 +1,7 @@
 package net.foxtam.foxclicker;
 
+import lombok.Getter;
+import lombok.With;
 import net.foxtam.foxclicker.exceptions.FoxClickerException;
 import net.foxtam.foxclicker.exceptions.ImageNotFoundException;
 import net.foxtam.foxclicker.exceptions.InterruptBotException;
@@ -51,33 +53,25 @@ public abstract class Bot {
         return System.nanoTime() / 1_000_000_000.0;
     }
 
+    protected Frame createFrame(Window window, double timeLimitInSeconds, double tolerance, boolean inColor) {
+        return new Frame(window, timeLimitInSeconds, tolerance, inColor);
+    }
+
+    @With
     public class Frame {
+        @Getter
         private final Window window;
-        private final double timeLimitInSeconds;
+        private final double timeLimit;
         private final double tolerance;
         private final boolean inColor;
 
-        public Frame(Window window, double timeLimitInSeconds, double tolerance, boolean inColor) {
-            enter(timeLimitInSeconds, tolerance, inColor);
+        private Frame(Window window, double timeLimit, double tolerance, boolean inColor) {
+            enter(timeLimit, tolerance, inColor);
             this.window = window;
-            this.timeLimitInSeconds = timeLimitInSeconds;
+            this.timeLimit = timeLimit;
             this.tolerance = tolerance;
             this.inColor = inColor;
             exit();
-        }
-
-        public Frame withTime(double timeLimitInSeconds) {
-            enter(timeLimitInSeconds);
-            return exit(new Frame(window, timeLimitInSeconds, tolerance, inColor));
-        }
-
-        public Frame withTolerance(double tolerance) {
-            return new Frame(window, timeLimitInSeconds, tolerance, inColor);
-        }
-
-        public Frame withColor(boolean inColor) {
-            enter(inColor);
-            return exit(new Frame(window, timeLimitInSeconds, tolerance, inColor));
         }
 
         public boolean isImageVisible(Image image) {
@@ -104,13 +98,13 @@ public abstract class Bot {
                     lifeController.checkPauseOrInterrupt();
                     if (window.getPointOf(image, tolerance, inColor).isPresent()) return exit(image);
                     lifeController.checkPauseOrInterrupt();
-                    if (getCurrentSeconds() > startTime + timeLimitInSeconds) {
+                    if (getCurrentSeconds() > startTime + timeLimit) {
                         throw exception(
                                 new WaitForImageException(
                                         "None of this "
                                                 + Arrays.toString(images)
                                                 + " appeared in "
-                                                + timeLimitInSeconds
+                                                + timeLimit
                                                 + " seconds"));
                     }
                 }
@@ -135,7 +129,7 @@ public abstract class Bot {
                 waitForAnyImage(image);
             } catch (WaitForImageException e) {
                 throw exception(
-                        new WaitForImageException(image + " didn't appear for " + timeLimitInSeconds + " seconds"));
+                        new WaitForImageException(image + " didn't appear for " + timeLimit + " seconds"));
             }
             exit();
         }
@@ -180,26 +174,26 @@ public abstract class Bot {
             exit();
         }
 
-        protected ScreenPoint getWindowCenterPoint() {
+        public ScreenPoint getCenterPoint() {
             enter();
             return exit(window.getWindowCenterPoint());
         }
 
-        protected void mouseDragDirection(Direction direction, int lengthInPixel) {
+        public void mouseDragDirection(Direction direction, int lengthInPixel) {
             enter(direction, lengthInPixel);
             window.activate();
             mouse.drag(direction, lengthInPixel);
             exit();
         }
 
-        protected void leftClickAt(ScreenPoint point) {
+        public void leftClickAt(ScreenPoint point) {
             enter(point);
             window.activate();
             mouse.leftClickAt(point);
             exit();
         }
 
-        protected void mouseMoveTo(ScreenPoint point) {
+        public void mouseMoveTo(ScreenPoint point) {
             enter(point);
             window.activate();
             mouse.moveTo(point);
