@@ -1,7 +1,7 @@
 package net.foxtam.foxclicker;
 
-import lombok.With;
 import net.foxtam.foxclicker.exceptions.UnableToFindWindow;
+import net.foxtam.foxclicker.screen.CheckScreen;
 import net.foxtam.foxclicker.screen.Screen;
 
 import java.awt.*;
@@ -14,28 +14,14 @@ import static com.sun.jna.platform.win32.WinUser.*;
 
 public class Window {
     private final HWND hWnd;
-    @With
     private final Screen screen;
 
-    private Window(HWND hWnd, Screen screen) {
+    public Window(HWND hWnd, double tolerance, boolean inColor, List<Pair<Image, Runnable>> checks) {
+        if (hWnd == null) {
+            throw new UnableToFindWindow("Unable to find the window!");
+        }
         this.hWnd = hWnd;
-        this.screen = screen;
-    }
-
-    public static Window getByClass(String windowClassName, Screen screen) {
-        HWND hWnd = User32.INSTANCE.FindWindow(windowClassName, null);
-        if (hWnd == null) {
-            throw new UnableToFindWindow("Unable to find the window with class: " + windowClassName);
-        }
-        return new Window(hWnd, screen);
-    }
-
-    public static Window getByTitle(String windowTitle, Screen screen) {
-        HWND hWnd = User32.INSTANCE.FindWindow(null, windowTitle);
-        if (hWnd == null) {
-            throw new UnableToFindWindow("Unable to find the window with title: " + windowTitle);
-        }
-        return new Window(hWnd, screen);
+        this.screen = CheckScreen.of(tolerance, inColor, checks);
     }
 
     public ScreenPoint getWindowCenterPoint() {

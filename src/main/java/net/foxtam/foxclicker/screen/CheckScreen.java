@@ -4,16 +4,16 @@ import lombok.AllArgsConstructor;
 import net.foxtam.foxclicker.Image;
 import net.foxtam.foxclicker.Pair;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
 @AllArgsConstructor(staticName = "of")
 public class CheckScreen implements Screen {
 
-    private final List<Pair<Image, Runnable>> checks;
     private final double tolerance;
     private final boolean inColor;
+    private final List<Pair<Image, Runnable>> checks;
 
     @Override
     public BufferedImage getScreenCapture(Rectangle rectangle) {

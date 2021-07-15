@@ -1,6 +1,8 @@
 package net.foxtam.foxclicker;
 
-import lombok.Getter;
+import com.sun.jna.platform.win32.WinDef;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.With;
 import net.foxtam.foxclicker.exceptions.FoxClickerException;
 import net.foxtam.foxclicker.exceptions.ImageNotFoundException;
@@ -11,6 +13,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import static net.foxtam.foxclicker.GlobalLogger.*;
 
@@ -53,24 +56,32 @@ public abstract class Bot {
         return System.nanoTime() / 1_000_000_000.0;
     }
 
-    protected Frame createFrame(Window window, double timeLimitInSeconds, double tolerance, boolean inColor) {
-        return new Frame(window, timeLimitInSeconds, tolerance, inColor);
+    protected Frame createFrame(WinDef.HWND hWnd,
+                                double timeLimitInSeconds,
+                                double tolerance,
+                                boolean inColor,
+                                List<Pair<Image, Runnable>> checks) {
+        Objects.requireNonNull(hWnd);
+        return new Frame(hWnd, timeLimitInSeconds, tolerance, inColor, checks);
     }
 
-    @With
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public class Frame {
-        @Getter
         private final Window window;
+        @With
         private final double timeLimit;
+        @With
         private final double tolerance;
+        @With
         private final boolean inColor;
 
-        private Frame(Window window, double timeLimit, double tolerance, boolean inColor) {
+        private Frame(WinDef.HWND hWnd,
+                      double timeLimit,
+                      double tolerance,
+                      boolean inColor,
+                      List<Pair<Image, Runnable>> checks) {
+            this(new Window(hWnd, tolerance, inColor, checks), timeLimit, tolerance, inColor);
             enter(timeLimit, tolerance, inColor);
-            this.window = window;
-            this.timeLimit = timeLimit;
-            this.tolerance = tolerance;
-            this.inColor = inColor;
             exit();
         }
 
