@@ -30,10 +30,10 @@ public class ForegroundMouse implements Mouse {
         wFrame.activate();
         ScreenPoint point = getCurrentMouseLocation();
         switch (direction) {
-            case UP -> dragTo(ScreenPoint.of(point.getX(), point.getY() - lengthInPixel));
-            case DOWN -> dragTo(ScreenPoint.of(point.getX(), point.getY() + lengthInPixel));
-            case RIGHT -> dragTo(ScreenPoint.of(point.getX() + lengthInPixel, point.getY()));
-            case LEFT -> dragTo(ScreenPoint.of(point.getX() - lengthInPixel, point.getY()));
+            case UP -> dragTo(point.shift(0, -lengthInPixel));
+            case DOWN -> dragTo(point.shift(0, lengthInPixel));
+            case RIGHT -> dragTo(point.shift(lengthInPixel, 0));
+            case LEFT -> dragTo(point.shift(-lengthInPixel, 0));
         }
     }
 
