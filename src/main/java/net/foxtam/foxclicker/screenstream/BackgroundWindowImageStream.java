@@ -1,14 +1,30 @@
-package net.foxtam.foxclicker;
+package net.foxtam.foxclicker.screenstream;
 
 import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.GDI32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinGDI;
 import com.sun.jna.platform.win32.WinNT;
+import net.foxtam.foxclicker.GDI32Extra;
+import net.foxtam.foxclicker.User32;
+import net.foxtam.foxclicker.WinGDIExtra;
+import net.foxtam.foxclicker.window.WindowFrame;
 
 import java.awt.image.BufferedImage;
 
-public class Capture {
+public class BackgroundWindowImageStream implements ImageStream {
+
+    private final WindowFrame windowFrame;
+
+    public BackgroundWindowImageStream(WinDef.HWND hWnd) {
+        this.windowFrame = new WindowFrame(hWnd);
+    }
+
+    @Override
+    public BufferedImage getNextImage() {
+        return getWindowCapture(windowFrame.getHWND());
+    }
+
     public static BufferedImage getWindowCapture(WinDef.HWND hWnd) {
 //        HDC hdcWindow = User32.INSTANCE.GetDC(hWnd);
         WinDef.HDC hdcWindow = User32.INSTANCE.GetWindowDC(hWnd);

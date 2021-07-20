@@ -1,4 +1,4 @@
-package net.foxtam.foxclicker.screen;
+package net.foxtam.foxclicker.screenstream;
 
 import lombok.SneakyThrows;
 import net.foxtam.foxclicker.GlobalLogger;
@@ -14,29 +14,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class LoggedScreen implements Screen {
+public class LoggedImageStream implements ImageStream {
 
     private static final int numberOfLogScreenshots = 500;
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH-mm-ss-SSS");
-    private static LoggedScreen INSTANCE;
     private final Queue<Path> screenshotPathQueue = new LinkedList<>();
     private final Path screenDirectory = GlobalLogger.LOG_DIRECTORY.resolve("screen");
+    private final ImageStream imageStream;
     private BufferedImage lastScreenshot;
 
-    private LoggedScreen() {
+    public LoggedImageStream(ImageStream imageStream) {
+        this.imageStream = imageStream;
         this.lastScreenshot = Robo.getInstance().createScreenCapture(new Rectangle(0, 0, 10, 10));
     }
 
-    public static synchronized LoggedScreen getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new LoggedScreen();
-        }
-        return INSTANCE;
-    }
-
     @Override
-    public BufferedImage getCapture(Rectangle rectangle) {
-        BufferedImage image = Robo.getInstance().createScreenCapture(rectangle);
+    public BufferedImage getNextImage() {
+        BufferedImage image = imageStream.getNextImage();
         saveImage(image, LocalTime.now().format(timeFormatter));
         return image;
     }

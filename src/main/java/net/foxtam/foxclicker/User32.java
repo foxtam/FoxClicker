@@ -1,6 +1,7 @@
 package net.foxtam.foxclicker;
 
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.*;
 import com.sun.jna.platform.win32.WinUser.*;
 import com.sun.jna.win32.StdCallLibrary;
@@ -27,4 +28,6 @@ public interface User32 extends StdCallLibrary {
     HDC GetWindowDC(HWND hWnd);
 
     int ReleaseDC(HWND var1, HDC var2);
+
+    WinDef.LRESULT SendMessage(WinDef.HWND hWnd, int msg, WinDef.WPARAM wParam, WinDef.LPARAM lParam);
 }

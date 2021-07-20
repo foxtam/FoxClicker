@@ -4,6 +4,7 @@ import com.sun.jna.platform.win32.WinDef;
 import net.foxtam.foxclicker.Image;
 import net.foxtam.foxclicker.LifeController;
 import net.foxtam.foxclicker.Pair;
+import net.foxtam.foxclicker.mouse.BackgroundMouse;
 import net.foxtam.foxclicker.mouse.Mouse;
 import net.foxtam.foxclicker.window.BackgroundWindow;
 import net.foxtam.foxclicker.window.Window;

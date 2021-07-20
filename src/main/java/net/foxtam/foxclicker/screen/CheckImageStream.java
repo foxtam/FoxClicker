@@ -1,23 +1,32 @@
 package net.foxtam.foxclicker.screen;
 
-import lombok.AllArgsConstructor;
 import net.foxtam.foxclicker.Image;
 import net.foxtam.foxclicker.Pair;
+import net.foxtam.foxclicker.screenstream.ImageStream;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-@AllArgsConstructor(staticName = "of")
-public class CheckScreen implements Screen {
+public class CheckImageStream implements ImageStream {
 
+    private final ImageStream imageStream;
     private final double tolerance;
     private final boolean inColor;
     private final List<Pair<Image, Runnable>> checks;
 
+    public CheckImageStream(ImageStream imageStream,
+                            double tolerance,
+                            boolean inColor,
+                            List<Pair<Image, Runnable>> checks) {
+        this.imageStream = imageStream;
+        this.tolerance = tolerance;
+        this.inColor = inColor;
+        this.checks = checks;
+    }
+
     @Override
-    public BufferedImage getCapture(Rectangle rectangle) {
-        BufferedImage screenCapture = LoggedScreen.getInstance().getCapture(rectangle);
+    public BufferedImage getNextImage() {
+        BufferedImage screenCapture = imageStream.getNextImage();
         check(Image.from(screenCapture));
         return screenCapture;
     }
