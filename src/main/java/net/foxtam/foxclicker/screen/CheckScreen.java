@@ -16,8 +16,8 @@ public class CheckScreen implements Screen {
     private final List<Pair<Image, Runnable>> checks;
 
     @Override
-    public BufferedImage getScreenCapture(Rectangle rectangle) {
-        BufferedImage screenCapture = LoggedScreen.getInstance().getScreenCapture(rectangle);
+    public BufferedImage getCapture(Rectangle rectangle) {
+        BufferedImage screenCapture = LoggedScreen.getInstance().getCapture(rectangle);
         check(Image.from(screenCapture));
         return screenCapture;
     }

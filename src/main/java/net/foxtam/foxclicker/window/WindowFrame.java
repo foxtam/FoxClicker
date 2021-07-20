@@ -18,7 +18,6 @@ public class WindowFrame {
     }
 
     public ScreenPoint getWindowCenterPoint() {
-        activate();
         Rectangle rect = getRectangle();
         return ScreenPoint.of(rect.x + rect.width / 2, rect.y + rect.height / 2);
     }
@@ -39,8 +38,11 @@ public class WindowFrame {
 
     public Rectangle getRectangle() {
         RECT rect = new RECT();
-        activate();
         User32.INSTANCE.GetWindowRect(hWnd, rect);
         return rect.toRectangle();
+    }
+
+    public HWND getHWND() {
+        return hWnd;
     }
 }

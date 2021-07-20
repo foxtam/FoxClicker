@@ -17,7 +17,7 @@ public class SimpleScreen implements Screen {
     }
 
     @Override
-    public BufferedImage getScreenCapture(Rectangle rectangle) {
+    public BufferedImage getCapture(Rectangle rectangle) {
         return Robo.getInstance().createScreenCapture(rectangle);
     }
 }

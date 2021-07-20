@@ -35,7 +35,7 @@ public class LoggedScreen implements Screen {
     }
 
     @Override
-    public BufferedImage getScreenCapture(Rectangle rectangle) {
+    public BufferedImage getCapture(Rectangle rectangle) {
         BufferedImage image = Robo.getInstance().createScreenCapture(rectangle);
         saveImage(image, LocalTime.now().format(timeFormatter));
         return image;

@@ -15,7 +15,7 @@ public interface Context {
     }
 
     static Context background(WinDef.HWND hWnd, List<Pair<Image, Runnable>> checks) {
-        throw new UnsupportedOperationException();
+        return new BackgroundContext(hWnd, checks);
     }
 
     Window getWindow(double tolerance, boolean inColor);

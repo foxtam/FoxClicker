@@ -1,26 +1,22 @@
 package net.foxtam.foxclicker.window;
 
+import com.sun.jna.platform.win32.*;
+import net.foxtam.foxclicker.*;
 import net.foxtam.foxclicker.Image;
-import net.foxtam.foxclicker.Pair;
-import net.foxtam.foxclicker.ScreenPoint;
 import net.foxtam.foxclicker.exceptions.UnableToFindWindow;
 import net.foxtam.foxclicker.screen.CheckScreen;
 import net.foxtam.foxclicker.screen.Screen;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sun.jna.platform.win32.WinDef.HWND;
-
-public class ForegroundWindow implements Window {
+public class BackgroundWindow implements Window {
     private final WindowFrame wFrame;
     private final Screen screen;
 
-    public ForegroundWindow(HWND hWnd,
-                            double tolerance,
-                            boolean inColor,
-                            List<Pair<Image, Runnable>> checks) {
+    public BackgroundWindow(WinDef.HWND hWnd, double tolerance, boolean inColor, List<Pair<Image, Runnable>> checks) {
         if (hWnd == null) {
             throw new UnableToFindWindow("Unable to find the window!");
         }
@@ -35,9 +31,9 @@ public class ForegroundWindow implements Window {
 
     @Override
     public Optional<ScreenPoint> getPointOf(Image image, double tolerance, boolean inColor) {
-        wFrame.activate();
+        BufferedImage windowCapture = Capture.getWindowCapture(wFrame.getHWND());
         Rectangle rect = getRectangle();
-        return Image.from(screen.getCapture(rect))
+        return Image.from(windowCapture)
                 .getPointOf(image, tolerance, inColor)
                 .map(p -> ScreenPoint.of(p.getX() + rect.x, p.getY() + rect.y));
     }
@@ -49,12 +45,6 @@ public class ForegroundWindow implements Window {
 
     @Override
     public List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
-        wFrame.activate();
-        Rectangle rect = getRectangle();
-        return Image.from(screen.getCapture(rect))
-                .getAllPointsOf(image, tolerance, inColor)
-                .stream()
-                .map(p -> ScreenPoint.of(p.getX() + rect.x, p.getY() + rect.y))
-                .toList();
+        return null;
     }
 }

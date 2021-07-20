@@ -23,4 +23,8 @@ public interface User32 extends StdCallLibrary {
     HWND GetForegroundWindow();
 
     boolean GetWindowRect(HWND hWnd, RECT rect);
+
+    HDC GetWindowDC(HWND hWnd);
+
+    int ReleaseDC(HWND var1, HDC var2);
 }
