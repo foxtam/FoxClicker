@@ -1,22 +1,33 @@
-package net.foxtam.foxclicker;
+package net.foxtam.foxclicker.mouse;
+
+import com.sun.jna.platform.win32.WinDef;
+import net.foxtam.foxclicker.Direction;
+import net.foxtam.foxclicker.LifeController;
+import net.foxtam.foxclicker.Robo;
+import net.foxtam.foxclicker.ScreenPoint;
+import net.foxtam.foxclicker.window.WindowFrame;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
 
 import static java.lang.Math.*;
 
-public class Mouse {
+public class ForegroundMouse implements Mouse {
 
     private static final int mouseSpeed = 2000;
     private static final int mouseDelay = 100;
 
-    private final BotLifeController lifeController;
+    private final LifeController lifeController;
+    private final WindowFrame wFrame;
 
-    public Mouse(BotLifeController lifeController) {
+    public ForegroundMouse(LifeController lifeController, WinDef.HWND hWnd) {
         this.lifeController = lifeController;
+        this.wFrame = new WindowFrame(hWnd);
     }
 
+    @Override
     public void drag(Direction direction, int lengthInPixel) {
+        wFrame.activate();
         ScreenPoint point = getCurrentMouseLocation();
         switch (direction) {
             case UP -> dragTo(ScreenPoint.of(point.getX(), point.getY() - lengthInPixel));
@@ -31,7 +42,9 @@ public class Mouse {
         return ScreenPoint.of(location.x, location.y);
     }
 
+    @Override
     public void dragTo(ScreenPoint point) {
+        wFrame.activate();
         Robo.getInstance().mousePress(InputEvent.BUTTON1_DOWN_MASK);
         lifeController.sleep(mouseDelay);
         moveTo(point);
@@ -40,7 +53,9 @@ public class Mouse {
         lifeController.sleep(mouseDelay);
     }
 
+    @Override
     public void moveTo(ScreenPoint point) {
+        wFrame.activate();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int targetX = clip(point.getX(), 0, screenSize.width - 1);
         int targetY = clip(point.getY(), 0, screenSize.height - 1);
@@ -50,7 +65,7 @@ public class Mouse {
         int currentY = currentPoint.getY();
         double diffX = targetX - currentX;
         double diffY = targetY - currentY;
-        
+
         if (diffX != 0 || diffY != 0) {
             int n = ((int) max(abs(diffX), abs(diffY))) / 10;
             double dx = diffX / n;
@@ -80,6 +95,7 @@ public class Mouse {
         return min(value, to);
     }
 
+    @Override
     public void leftClickAt(ScreenPoint point) {
         moveTo(point);
         leftClickInPlace();
@@ -90,6 +106,7 @@ public class Mouse {
     }
 
     private void clickInPlace(int button) {
+        wFrame.activate();
         Robo.getInstance().mousePress(button);
         lifeController.sleep(mouseDelay);
         Robo.getInstance().mouseRelease(button);

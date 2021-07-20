@@ -19,11 +19,11 @@ enum State {
     }
 }
 
-public class BotLifeController implements AutoCloseable {
+public class LifeController implements AutoCloseable {
     private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
     private State state = State.RUN;
 
-    public BotLifeController(KeyConfig keyConfig, Runnable onStop, Runnable onPause) {
+    public LifeController(KeyConfig keyConfig, Runnable onStop, Runnable onPause) {
         keyboardHook.addKeyListener(
                 new GlobalKeyAdapter() {
                     @Override
