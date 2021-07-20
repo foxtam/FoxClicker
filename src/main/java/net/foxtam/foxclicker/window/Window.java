@@ -12,8 +12,6 @@ public interface Window {
 
     Rectangle getRectangle();
 
-    void activate();
-
     Optional<ScreenPoint> getPointOf(Image image, double tolerance, boolean inColor);
 
     List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor);

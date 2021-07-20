@@ -20,7 +20,7 @@ public class ForegroundWindow implements Window {
     public ForegroundWindow(HWND hWnd,
                             double tolerance,
                             boolean inColor,
-                            List<Pair<net.foxtam.foxclicker.Image, Runnable>> checks) {
+                            List<Pair<Image, Runnable>> checks) {
         if (hWnd == null) {
             throw new UnableToFindWindow("Unable to find the window!");
         }
@@ -34,17 +34,12 @@ public class ForegroundWindow implements Window {
     }
 
     @Override
-    public Optional<ScreenPoint> getPointOf(net.foxtam.foxclicker.Image image, double tolerance, boolean inColor) {
-        activate();
+    public Optional<ScreenPoint> getPointOf(Image image, double tolerance, boolean inColor) {
+        wFrame.activate();
         Rectangle rect = getRectangle();
-        return net.foxtam.foxclicker.Image.from(screen.getScreenCapture(rect))
+        return Image.from(screen.getScreenCapture(rect))
                 .getPointOf(image, tolerance, inColor)
                 .map(p -> ScreenPoint.of(p.getX() + rect.x, p.getY() + rect.y));
-    }
-
-    @Override
-    public void activate() {
-        wFrame.activate();
     }
 
     @Override
@@ -53,8 +48,8 @@ public class ForegroundWindow implements Window {
     }
 
     @Override
-    public List<ScreenPoint> getAllPointsOf(net.foxtam.foxclicker.Image image, double tolerance, boolean inColor) {
-        activate();
+    public List<ScreenPoint> getAllPointsOf(Image image, double tolerance, boolean inColor) {
+        wFrame.activate();
         Rectangle rect = getRectangle();
         return Image.from(screen.getScreenCapture(rect))
                 .getAllPointsOf(image, tolerance, inColor)
