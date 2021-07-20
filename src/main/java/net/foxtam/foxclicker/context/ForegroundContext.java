@@ -7,7 +7,7 @@ import net.foxtam.foxclicker.window.ForegroundWindow;
 
 import java.util.List;
 
-public class ForegroundContext implements Context {
+class ForegroundContext implements Context {
     
     private final WinDef.HWND hWnd;
     private final List<Pair<Image, Runnable>> checks;
